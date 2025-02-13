@@ -433,3 +433,29 @@ JOUR, Atlas, William, Ma, Sami, Chou, Yi, Connors, Katrina, Scurfield, Daniel, N
 * Typical animal size in pixels: N/A
   
 <img src="https://www.frontiersin.org/files/Articles/1200408/fmars-10-1200408-HTML/image_m/fmars-10-1200408-g005.jpg" width=700>
+
+
+### FathomNet Database
+
+<div style="display: flex; align-items: center;">
+<img src="https://raw.githubusercontent.com/fathomnet/fathomnet-logo/refs/heads/main/FathomNet_white_CenterText_400px.png" width=100 style="padding-left: 20" />
+<!-- Vertical line -->
+<div style="border-left: 2px solid white; margin-left: 20px; margin-right: 20px; height: 100"></div>
+<p>
+The FathomNet Database is an open-source image database that can be used to train, test, and validate state-of-the-art artificial intelligence algorithms to help us understand our ocean and its inhabitants. 
+</p>
+</div>
+
+
+Katija, K., Orenstein, E., Schlining, B. _et al._ FathomNet: A global image database for enabling artificial intelligence in the ocean. Sci Rep **12**, 15914 (2022). [https://doi.org/10.1038/s41598-022-19939-2](https://doi.org/10.1038/s41598-022-19939-2)
+
+* Data downloadable via https from FathomNet (<a href="https://fathomnet.org/">website</a>)
+* License: CC BY-NC-ND 4.0 with provision: _Notwithstanding any contrary provisions of such license, all Images may be used for training and development of machine learning algorithms for commercial, academic, and government purposes. For all other uses of the Images, users should contact the original copyright holder indicated in the Database for the applicable Images. The users of the Images accept full responsibility for their use._ (<a href="https://fathomnet.org/fathomnet/#/license">source</a>)
+* Metadata raw format: N/A (exportable via [fathomnet-py](https://github.com/fathomnet/fathomnet-py) to VOC, COCO, YOLO)
+* Categories/species: many (2400+ concepts in the database)
+* Vehicle type: primarily ROV
+* Image information: 100k+ images (growing over time)
+* Annotation information: 300k+ annotations (growing over time)
+* Typical animal size in pixels: N/A
+
+<img src="https://media.springernature.com/full/springer-static/image/art%3A10.1038%2Fs41598-022-19939-2/MediaObjects/41598_2022_19939_Fig1_HTML.jpg" width=700 />
