@@ -1,4 +1,6 @@
+ipykernel
 supervision
 opencv-python
 pandas
 numpy
+fathomnet
