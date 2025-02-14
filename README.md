@@ -11,9 +11,11 @@ This is a list of datasets with annotated marine/freshwater imagery, suitable fo
 
 It was suggested by [Dan Morris](https://dmorris.net) to emulate the [list of datasets with annotated wildlife in drone/aerial images](https://github.com/agentmorris/agentmorrispublic/blob/main/drone-datasets.md), with standardized metadata for each dataset, and consistent sample code for match annotations to images and rendering sample images.
 
-This list was curated by the following folks:
+This effort was supported by the following folks:
 * <a href="https://www.linkedin.com/in/filippo-varini/">Filippo Varini</a>
 * <a href="https://dmorris.net">Dan Morris</a>
+* <a href="https://www.mbari.org/person/kevin-barnard/">Kevin Barnard</a>
+* <a href="https://www.mbari.org/person/laura-chrobak/">Laura Chrobak</a>
 
 Email <a href="mailto:fppvrn@gmail.com">Filippo</a> if anything seems off, or if you know of datasets we're missing.
 
