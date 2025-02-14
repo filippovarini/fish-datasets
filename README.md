@@ -16,6 +16,8 @@ This effort was supported by the following folks:
 * <a href="https://dmorris.net">Dan Morris</a>
 * <a href="https://www.mbari.org/person/kevin-barnard/">Kevin Barnard</a>
 * <a href="https://www.mbari.org/person/laura-chrobak/">Laura Chrobak</a>
+* <a href="https://www.oceaneboulais.net/">Oceane Boulais</a>
+* <a href="https://alexvmt.github.io/">Alexander Merdian-Tarko</a>
 
 Email <a href="mailto:fppvrn@gmail.com">Filippo</a> if anything seems off, or if you know of datasets we're missing.
 

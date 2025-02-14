@@ -3,3 +3,4 @@ __pycache__
 __init__.py
 tmp/
 *.zip
+local
