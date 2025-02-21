@@ -4,3 +4,4 @@ __init__.py
 tmp/
 *.zip
 local
+.ipynb_checkpoints

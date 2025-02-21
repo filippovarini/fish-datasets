@@ -135,23 +135,21 @@ Jäger, Jonas, Simon, Marcel, Denzler, Joachim, Wolff, Viviane, Fricke-Neuderth,
 <img src="./data_preview/croatian_fish_sample_image.png" width=700>
   
   
-### Deep Fish
+### DeepFish
 
 ~40k images with a mix of classification, segmentation, and counting labels
   
-Saleh, A., Laradji, I. H., Konovalov, D. A., Bradley, M., Vazquez, D., & Sheaves, M. (2020). A realistic fish-habitat dataset to evaluate algorithms for underwater visual analysis. Scientific Reports, 10(1), 14671. https://doi.org/10.1038/s41598-020-71639-x
+Saleh A, Laradji IH, Konovalov DA, Bradley M, Vazquez D, Sheaves M. A realistic fish-habitat dataset to evaluate algorithms for underwater visual analysis. Scientific Reports. 2020 Sep 4;10(1):14671.
 
-* Data downloadable via via https from Queensland University (<a href="https://alzayats.github.io/DeepFish/">download link</a>)
-* License: CC BY 4.0 DEED (https://research.jcu.edu.au/data/published/48fcdde6576ee929325b01fca4207914/)
-* Metadata raw format: N/A
-* Categories/species: N/A
-* Vehicle type: N/A
-* Image information: N/A
-* Annotation information: N/A
-* Typical animal size in pixels: N/A
+* Data downloadable via https from Queensland University (<a href="https://alzayats.github.io/DeepFish/">download link</a>) (7.1GB)
+* License: Code is MIT, data is implied-MIT
+* Metadata raw format: png (segmentation masks)
+* Categories/species: 
+* Vehicle type: underwater camera deployed over the side of a boat
+* Image information: 311 images with segmentation masks
+* Annotation information: 388 segmentation masks
   
-<img src="https://media.springernature.com/lw685/springer-static/image/art%3A10.1038%2Fs41598-020-71639-x/MediaObjects/41598_2020_71639_Fig1_HTML.jpg?as=webp" width=700>
-  
+<img src="./data_preview/deepfish_sample_image.jpg" width=700>  
   
 ### The Brackish Dataset
 
