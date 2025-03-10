@@ -10,7 +10,7 @@ from dotenv import load_dotenv
 import os
 import shutil
 
-load_dotenv(dotenv_path="../.env")
+load_dotenv()
 
 # %%
 dataset_shortname = "roboflow_fish"
