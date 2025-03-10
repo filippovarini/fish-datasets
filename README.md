@@ -76,7 +76,7 @@ Solawetz, J. (2023, February 21). Fish object detection dataset. Roboflow. https
 * Image information: 1350 RGB images (the taxonomy is often inaccurate)
 * Annotation information: 3142 bounding boxes
 * Typical animal size in pixels: N/A
-* Code to render sample annotated image: <a href="./data_preview/visualise_roboflow_fish.ipynb">visualise_roboflow_fish.ipynb</a>
+* Code to render sample annotated image: <a href="./data_preview/visualise_roboflow_fish.py">visualise_roboflow_fish.py</a>
   
 <img src="./data_preview/roboflow_fish_sample_image.png" width=700>
   
