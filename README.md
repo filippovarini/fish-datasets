@@ -99,25 +99,6 @@ Kay, J., & Merrifield, M. (2021). The Fishnet Open Images Database: A Dataset fo
 <img src="./data_preview/fishnet_sample_image.png" width=700>
   
   
-### Croatian Fish
-
-800 images of fish in 12 classes
-  
-Jäger, Jonas, Simon, Marcel, Denzler, Joachim, Wolff, Viviane, Fricke-Neuderth, Klaus, Kruschel, Claudia, (2015), 6.1, 6.7, Croatian Fish Dataset: Fine-grained classification of fish species in their natural habitat, https://doi.org/10.5244/C.29.MVAB.6
-
-* Data downloadable via via https from Jena University (<a href="https://pub.inf-cv.uni-jena.de/pdf/Jaeger15:CFD">download link</a>)
-* License: CDLA-permissive 1.0
-* Metadata raw format: XML
-* Categories/species: 12 fish species
-* Vehicle type: BRUV
-* Image information: 794 RGB images
-* Annotation information: 794 cropped image classifications
-* Typical animal size in pixels: N/A
-* Code to render sample annotated image: <a href="./data_preview/visualise_croatian_fish.ipynb">visualise_croatian_fish.ipynb</a>
-  
-<img src="./data_preview/croatian_fish_sample_image.png" width=700>
-  
-  
 ### DeepFish
 
 ~40k images with a mix of classification, segmentation, and counting labels
