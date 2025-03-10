@@ -10,37 +10,34 @@ from dotenv import load_dotenv
 import os
 import shutil
 
-load_dotenv(dotenv_path="../.env")
-
+load_dotenv()
 # %%
-dataset_shortname = "roboflow_fish"
+dataset_shortname = "brackish_dataset"
 data_dir = Path("/mnt/data/tmp/") / dataset_shortname
 data_dir.mkdir(exist_ok=True, parents=True)
 
 # %%
-roboflow_api_key = os.getenv("ROBOFLOW_KEY_ROBOFLOW_FISH")
-print(f"ROBOFLOW_KEY: {roboflow_api_key}")
-data_url = f"https://public.roboflow.com/ds/KJiCisn7wU?key={roboflow_api_key}"
-
-data_path = data_dir / "roboflow_fish.zip"
+roboflow_api_key = os.getenv("ROBOFLOW_KEY_BRAKISH")
+data_url = f"https://public.roboflow.com/ds/vGBLxigwno?key={roboflow_api_key}"
+data_path = data_dir / "brakish_dataset.zip"
 
 
 def download_file(url, save_path):
+    """Download a file from URL to specified path"""
     print(f"Downloading {url} to {save_path}...")
     response = requests.get(url, stream=True)
-    response.raise_for_status()  # Raise an exception for HTTP errors
+    response.raise_for_status()
 
     with open(save_path, "wb") as f:
         for chunk in response.iter_content(chunk_size=8192):
             f.write(chunk)
-    print(f"Download complete: {save_path}")
 
 
 def extract_zip(zip_path, extract_to):
-    print(f"Extracting {zip_path} to {extract_to}")
+    """Extract zip file to specified directory"""
+    print(f"Extracting {zip_path} to {extract_to}...")
     with zipfile.ZipFile(zip_path, "r") as zip_ref:
         zip_ref.extractall(extract_to)
-    print(f"Extraction complete: {zip_path}")
 
 
 if data_dir.exists() and len(list(data_dir.glob("*"))) > 0:
@@ -123,13 +120,11 @@ def join_all_images_and_annotations_into_single_dataset(data_dir):
     return output_dir, output_annotation_file
 
 
-# Create combined dataset
 images_dir, annotations_file = join_all_images_and_annotations_into_single_dataset(
     data_dir
 )
 
 # %%
-# Load the dataset using supervision
 dataset = sv.DetectionDataset.from_coco(
     images_directory_path=str(images_dir),
     annotations_path=str(annotations_file),
@@ -193,8 +188,10 @@ image_example = compute_random_grid_of_annotated_images()
 # %%
 # Save a sample image
 if image_example is not None:
-    output_path = Path(f"{dataset_shortname}_sample_image.png")
+    output_path = Path(f"data_preview/{dataset_shortname}_sample_image.png")
     plt.imsave(str(output_path), image_example)
     print(f"Sample image saved to {output_path}")
 else:
     print("No annotated images found to save as sample")
+
+# %%
