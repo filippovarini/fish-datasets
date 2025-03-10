@@ -38,8 +38,9 @@ Farrell DM, Ferriss B, Sanderson B, Veggerby K, Robinson L, Trivedi A, Pathak S,
 * Image information: 77,739 images
 * Annotation information: 67,990 bounding boxes
 * Typical animal size in pixels: N/A
+* Code to render sample annotated image: <a href="./data_preview/visualise_noaa_puget.py">visualise_noaa_puget.py</a>
   
-<img src="http://lila.science/wp-content/uploads/2022/07/noaa-estuary-thumb-800.png" width=700>
+<img src="./data_preview/noaa_puget_sample_image.png" width=700>
   
   
 ### Project Natick Underwater Video
@@ -56,9 +57,9 @@ https://nbn-resolving.org/urn:nbn:de:0168-ssoar-57615-2
 * Image information: 1118 RGB images (~5% of images have FN annotations)
 * Annotation information: 998 bounding boxes
 * Typical animal size in pixels: N/A
-* Code to render sample annotated image: <a href="./data_preview/visualise_natick.ipynb">visualise_natick.ipynb</a>
+* Code to render sample annotated image: <a href="./data_preview/visualise_project_natick.py">visualise_project_natick.py</a>
   
-<img src="./data_preview/natick_sample_image.png" width=700>
+<img src="./data_preview/project_natick_sample_image.png" width=700>
   
   
 ### Application of a Deep Learning Image Classifier for Identification of Amazonian Fishes
