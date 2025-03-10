@@ -37,15 +37,18 @@ def extract_zip(zip_path, extract_to):
     print(f"Extraction complete: {zip_path}")
 
 
-print("Downloading data...")
-download_file(data_url, data_path)
-print("Extracting data...")
-extract_zip(data_path, data_dir)
-print("Removing Zipped files...")
-os.remove(data_path)
+if not data_dir.exists():
+    print("Downloading data...")
+    download_file(data_url, data_path)
+    print("Extracting data...")
+    extract_zip(data_path, data_dir)
+    print("Removing Zipped files...")
+    os.remove(data_path)
+else:
+    print("Data already downloaded and extracted")
 
 # %%
-dataset_path = data_dir / "data_release" / "fish_annotations"
+dataset_path = data_dir / "data_release" / "fish_arrow_worms_annotation"
 images_path = dataset_path / "JPEGImages"
 annotations_path = dataset_path / "Annotations"
 
@@ -111,7 +114,8 @@ sv.plot_images_grid(annotated_images, grid_size=(4, 4), titles=None, size=(20, 1
 # %%
 # Save a sample image
 if image_example is not None:
-    plt.imsave(f"{dataset_shortname}_sample_image.png", image_example)
-    print(f"Sample image saved as {dataset_shortname}_sample_image.png")
+    output_path = data_dir / f"{dataset_shortname}_sample_image.png"
+    plt.imsave(output_path, image_example)
+    print(f"Sample image saved as {output_path}")
 else:
     print("No annotated images with detections found to save as example")
