@@ -5,3 +5,4 @@ tmp/
 *.zip
 local
 .ipynb_checkpoints
+.env
