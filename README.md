@@ -129,7 +129,7 @@ Detection of Marine Animals in a New Underwater Dataset with Varying Visibility,
 * Image information: 12,444 RGB images
 * Annotation information: 35,565  bounding boxes
 * Typical animal size in pixels: N/A
-* Code to render sample annotated image: <a href="./data_preview/visualise_brackish_dataset.ipynb">visualise_brackish_dataset.ipynb</a>
+* Code to render sample annotated image: <a href="./data_preview/visualise_brackish_dataset.py">visualise_brackish_dataset.py</a>
   
 <img src="./data_preview/brackish_dataset_sample_image.png" width=700>
   
