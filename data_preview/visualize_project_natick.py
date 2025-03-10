@@ -45,7 +45,6 @@ print("Removing Zipped files...")
 os.remove(data_path)
 
 # %%
-# Set paths to the dataset
 dataset_path = data_dir / "data_release" / "fish_annotations"
 images_path = dataset_path / "JPEGImages"
 annotations_path = dataset_path / "Annotations"
@@ -75,7 +74,6 @@ def add_extension_to_filename(directory, extension=".jpg"):
 add_extension_to_filename(annotations_path)
 
 # %%
-# Load dataset using Supervision's VOC dataset loader
 print("Loading dataset...")
 dataset = sv.DetectionDataset.from_pascal_voc(
     images_directory_path=str(images_path),
@@ -86,7 +84,6 @@ print(f"Dataset length: {len(dataset)}")
 print(f"Dataset classes: {dataset.classes}")
 
 # %%
-# Visualize random samples
 box_annotator = sv.BoxAnnotator()
 label_annotator = sv.LabelAnnotator()
 
@@ -99,10 +96,8 @@ sample_indices = random.sample(range(len(dataset)), num_samples)
 for i in sample_indices:
     _, image, detections = dataset[i]
 
-    # Create labels
     labels = [dataset.classes[class_id] for class_id in detections.class_id]
 
-    # Annotate image
     annotated_image = image.copy()
     annotated_image = box_annotator.annotate(annotated_image, detections)
     annotated_image = label_annotator.annotate(annotated_image, detections, labels)
@@ -111,7 +106,6 @@ for i in sample_indices:
     if len(detections) > 0 and image_example is None:
         image_example = annotated_image
 
-# Plot grid of images
 sv.plot_images_grid(annotated_images, grid_size=(4, 4), titles=None, size=(20, 12))
 
 # %%
@@ -121,5 +115,3 @@ if image_example is not None:
     print(f"Sample image saved as {dataset_shortname}_sample_image.png")
 else:
     print("No annotated images with detections found to save as example")
-
-# %%
