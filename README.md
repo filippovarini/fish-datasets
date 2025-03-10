@@ -62,24 +62,6 @@ https://nbn-resolving.org/urn:nbn:de:0168-ssoar-57615-2
 <img src="./data_preview/project_natick_sample_image.png" width=700>
   
   
-### Application of a Deep Learning Image Classifier for Identification of Amazonian Fishes
-
-~3k images of out-of-water fish w/species labels and segmentation masks
-  
-Dikow, Rebecca (2023). Data from: Application of a Deep Learning Image Classifier for Identification of Amazonian Fishes. Office of the Chief Information Officer. Collection. https://doi.org/10.25573/data.c.5761097.v1
-
-* Data downloadable via via https from Smithsonian (<a href="https://smithsonian.figshare.com/collections/Data_from_Application_of_a_Deep_Learning_Image_Classifier_for_Identification_of_Amazonian_Fishes/5761097">download link</a>)
-* Metadata raw format: csv
-* Categories/species: fish genus
-* Vehicle type: out-of-the-water camera
-* Image information: 3068 RGB images
-* Annotation information: 3068 masked image classifications
-* Typical animal size in pixels: N/A
-* Code to render sample annotated image: <a href="./data_preview/visualise_amazon_fish.ipynb">visualise_amazon_fish.ipynb</a>
-  
-<img src="./data_preview/amazon_fish_sample_image.png" width=700>
-  
-  
 ### Roboflow Fish Dataset
 
 ~1k images of fish w/bounding boxes
