@@ -169,6 +169,7 @@ Pedersen, Malte; Lehotský, Daniel; Nikolov, Ivan; Moeslund, Thomas B.  10.48550
 * Image information: N/A
 * Annotation information: N/A
 * Typical animal size in pixels: N/A
+* Code to rentdr sample annotated image: <a href="./data_preview/visualise_brackishmot.ipynb">visualise_brackishmot.ipynb</a>
   
 <img src="https://lila.science/wp-content/uploads/2017/03/brackish-150.jpg" width=700>
   
