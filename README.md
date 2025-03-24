@@ -20,6 +20,7 @@ This effort was supported by the following folks:
 * <a href="https://alexvmt.github.io/">Alexander Merdian-Tarko</a>
 * <a href="https://www.linkedin.com/in/kameswari-devi-ayyagari-031820b7/">Devi Ayyagari</a>
 * <a href="https://www.linkedin.com/in/sonny-burniston/">Sonny Burniston</a>
+* <a href="https://www.linkedin.com/in/mona-dhiflaoui/">Mona Dhiflaoui</a>
 
 Email <a href="mailto:fppvrn@gmail.com">Filippo</a> if anything seems off, or if you know of datasets we're missing.
 
@@ -364,8 +365,9 @@ Bruslund Haurum J, Karpova A, Pedersen M, Hein Bengtson S, Moeslund TB. Re-ident
 * Image information: 2224 images
 * Annotation information: AAU VAP bounding boxes
 * Typical animal size in pixels: N/A
+* Code to render sample annotated image: <a href="./data_preview/visualize_Zebrafish_dataset.ipynb">visualize_Zebrafish_dataset.ipynb</a>
   
-<img src="http://lila.science/wp-content/uploads/2017/03/zebrafish-150.png" width=150>
+<img src="./data_preview/Zebrafish_sample_image.png" width=150>
   
   
 ### 3D-ZeF20
