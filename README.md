@@ -19,6 +19,7 @@ This effort was supported by the following folks:
 * <a href="https://www.oceaneboulais.net/">Oceane Boulais</a>
 * <a href="https://alexvmt.github.io/">Alexander Merdian-Tarko</a>
 * <a href="https://www.linkedin.com/in/kameswari-devi-ayyagari-031820b7/">Devi Ayyagari</a>
+* <a href="https://www.linkedin.com/in/sonny-burniston/">Sonny Burniston</a>
 
 Email <a href="mailto:fppvrn@gmail.com">Filippo</a> if anything seems off, or if you know of datasets we're missing.
 
