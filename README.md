@@ -80,7 +80,7 @@ Solawetz, J. (2023, February 21). Fish object detection dataset. Roboflow. https
 * Typical animal size in pixels: N/A
 * Code to render sample annotated image: <a href="./data_preview/visualise_roboflow_fish.py">visualise_roboflow_fish.py</a>
   
-<img src="./data_preview/roboflow_fish_sample_image.png" width=700>
+<img src="./data_preview/roboflow_fish_sample_image.png" width=400>
   
   
 ### The Fishnet Dataset
@@ -171,7 +171,7 @@ Pedersen, Malte; Lehotský, Daniel; Nikolov, Ivan; Moeslund, Thomas B.  10.48550
 * Typical animal size in pixels: N/A
 * Code to rentdr sample annotated image: <a href="./data_preview/visualise_brackishmot.ipynb">visualise_brackishmot.ipynb</a>
   
-<img src="https://lila.science/wp-content/uploads/2017/03/brackish-150.jpg" width=700>
+<img src="https://lila.science/wp-content/uploads/2017/03/brackish-150.jpg" width=150>
   
   
 ### Visual Marine Animal Tracking
@@ -189,7 +189,7 @@ Cai, L., McGuire, N.E., Hanlon, R. et al. Semi-supervised Visual Tracking of Mar
 * Annotation information: N/A
 * Typical animal size in pixels: N/A
   
-<img src="http://lila.science/wp-content/uploads/2017/03/behavior-fish-150.png" width=700>
+<img src="http://lila.science/wp-content/uploads/2017/03/behavior-fish-150.png" width=150>
   
   
 ### OzFish
@@ -244,7 +244,7 @@ Joly A., Goeau H., Glotin H., Spampinato C., Bonnet P., Vellinga W.-P., Planquè
 * Annotation information: 14,000 bounding boxes
 * Typical animal size in pixels: N/A
   
-<img src="http://lila.science/wp-content/uploads/2017/03/fishclef_2015-150.png" width=700>
+<img src="http://lila.science/wp-content/uploads/2017/03/fishclef_2015-150.png" width=150>
   
   
 ### VIAME FishTrack
@@ -259,7 +259,7 @@ Several thousand BRUV images with bounding boxes on fish and bait
 * Annotation information: bounding boxes
 * Typical animal size in pixels: N/A
   
-<img src="http://lila.science/wp-content/uploads/2017/03/fishtrack-boxes-150-1.png" width=700>
+<img src="http://lila.science/wp-content/uploads/2017/03/fishtrack-boxes-150-1.png" width=150>
   
   
 ### Brackish Underwater Dataset
@@ -312,7 +312,7 @@ Jansen, A., Walden, D., Walker, S., & Buccella, C. (2022). A deep learning datas
 * Annotation information: 82,904 bounding boxes
 * Typical animal size in pixels: N/A
   
-<img src="http://lila.science/wp-content/uploads/2017/03/kakadu_fish_150.jpg" width=700>
+<img src="http://lila.science/wp-content/uploads/2017/03/kakadu_fish_150.jpg" width=150>
   
   
 ### AFFiNe
@@ -328,7 +328,7 @@ Jansen, A., Walden, D., Walker, S., & Buccella, C. (2022). A deep learning datas
 * Annotation information: N/A
 * Typical animal size in pixels: N/A
   
-<img src="http://lila.science/wp-content/uploads/2017/03/affine-150.jpg" width=700>
+<img src="http://lila.science/wp-content/uploads/2017/03/affine-150.jpg" width=150>
   
   
 ### Brook trout imagery for individual ID
@@ -347,7 +347,7 @@ Hitt, N.P., Kessler, K.G., and Letcher, B.H., 2022, Brook trout imagery data for
 * Annotation information: N/A
 * Typical animal size in pixels: N/A
   
-<img src="http://lila.science/wp-content/uploads/2017/03/brook-trout-150.jpg" width=700>
+<img src="http://lila.science/wp-content/uploads/2017/03/brook-trout-150.jpg" width=150>
   
   
 ### AAU Zebrafish Re-Identification Dataset
@@ -365,7 +365,7 @@ Bruslund Haurum J, Karpova A, Pedersen M, Hein Bengtson S, Moeslund TB. Re-ident
 * Annotation information: AAU VAP bounding boxes
 * Typical animal size in pixels: N/A
   
-<img src="http://lila.science/wp-content/uploads/2017/03/zebrafish-150.png" width=700>
+<img src="http://lila.science/wp-content/uploads/2017/03/zebrafish-150.png" width=150>
   
   
 ### 3D-ZeF20
@@ -406,17 +406,9 @@ JOUR, Atlas, William, Ma, Sami, Chou, Yi, Connors, Katrina, Scurfield, Daniel, N
 
 ### FathomNet Database
 
-<div style="display: flex; align-items: center;">
-<img src="https://raw.githubusercontent.com/fathomnet/fathomnet-logo/refs/heads/main/FathomNet_white_CenterText_400px.png" width=100 style="padding-left: 20" />
-<!-- Vertical line -->
-<div style="border-left: 2px solid white; margin-left: 20px; margin-right: 20px; height: 100"></div>
-<p>
+Katija, K., Orenstein, E., Schlining, B. _et al._ FathomNet: A global image database for enabling artificial intelligence in the ocean. Sci Rep 12, 15914 (2022). [https://doi.org/10.1038/s41598-022-19939-2](https://doi.org/10.1038/s41598-022-19939-2)
+
 The FathomNet Database is an open-source image database that can be used to train, test, and validate state-of-the-art artificial intelligence algorithms to help us understand our ocean and its inhabitants. 
-</p>
-</div>
-
-
-Katija, K., Orenstein, E., Schlining, B. _et al._ FathomNet: A global image database for enabling artificial intelligence in the ocean. Sci Rep **12**, 15914 (2022). [https://doi.org/10.1038/s41598-022-19939-2](https://doi.org/10.1038/s41598-022-19939-2)
 
 * Data downloadable via https from FathomNet (<a href="https://fathomnet.org/">website</a>)
 * License: CC BY-NC-ND 4.0 with provision: _Notwithstanding any contrary provisions of such license, all Images may be used for training and development of machine learning algorithms for commercial, academic, and government purposes. For all other uses of the Images, users should contact the original copyright holder indicated in the Database for the applicable Images. The users of the Images accept full responsibility for their use._ (<a href="https://fathomnet.org/fathomnet/#/license">source</a>)
