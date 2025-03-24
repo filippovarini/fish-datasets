@@ -188,8 +188,8 @@ Cai, L., McGuire, N.E., Hanlon, R. et al. Semi-supervised Visual Tracking of Mar
 * Image information: N/A
 * Annotation information: N/A
 * Typical animal size in pixels: N/A
-  
-<img src="http://lila.science/wp-content/uploads/2017/03/behavior-fish-150.png" width=150>
+* Code to rentdr sample annotated image: <a href="./data_preview/visualise_vmat.ipynb">visualise_vmat.ipynb</a>
+<img src="./data_preview/vmat_sample_image.png" width=150>
   
   
 ### OzFish
