@@ -1,6 +1,7 @@
 # %%
 from pathlib import Path
 from datetime import datetime
+import json
 
 import pandas as pd
 import cv2
@@ -39,14 +40,16 @@ def extract_frame_from_video(frames_path: Path, video_path: Path, timestamp_str:
     cap = cv2.VideoCapture(video_path)
     cap.set(cv2.CAP_PROP_POS_MSEC, timestamp.timestamp() * 1000)
     ret, frame = cap.read()
+    if not ret:
+        raise ValueError(f"Failed to read frame from {video_path}")
+    height, width, _ = frame.shape
     cv2.imwrite(output_path, frame)
     cap.release()
 
     print(f"Saved frame to {output_path}")
-    return output_path
+    return output_path, height, width
 
 
-# %%
 def viame_annotations_to_coco(camera_path: Path, output_dir: Path):
     csv_path = camera_path / "annotations.viame.csv"
     video_path = camera_path / f"{camera_path.name}.mp4"
@@ -63,8 +66,15 @@ def viame_annotations_to_coco(camera_path: Path, output_dir: Path):
     # Initialize COCO format dictionary
     coco_data = {"images": [], "annotations": [], "categories": []}
 
+    # Keep track of categories and assigned IDs
+    categories = {}
+    category_id = 1
+
     # Track image IDs (frame numbers) we've already processed
     image_ids = set()
+    
+    # Track annotation ID
+    annotation_id = 1
 
     for index, row in df.iterrows():
         frame_timestamp = row["2: Video or Image Identifier"]
@@ -73,14 +83,67 @@ def viame_annotations_to_coco(camera_path: Path, output_dir: Path):
         # Add image entry if we haven't seen this frame before
         if frame_id not in image_ids:
             image_ids.add(frame_id)
-            image_filename = extract_frame_from_video(
+            image_filename, image_height, image_width = extract_frame_from_video(
                 output_frames_path, video_path, frame_timestamp
             )
-        break
+            coco_data["images"].append(
+                {
+                    "id": frame_id,
+                    "file_name": image_filename,
+                    "height": image_height,
+                    "width": image_width,
+                }
+            )
+
+        # Extract category information (species)
+        species = row["10-11+: Repeated Species"]
+        assert not pd.isna(species), f"Species is NaN for row {index}"
+
+        # Add new category if not seen before
+        if species not in categories:
+            categories[species] = category_id
+            coco_data["categories"].append(
+                {
+                    "id": category_id,
+                    "name": species,
+                }
+            )
+            category_id += 1
+        
+        # Extract bounding box coordinates
+        bbox_cols = ["4-7: Img-bbox(TL_x", "TL_y", "BR_x", "BR_y)"]
+        assert all(col in row.index for col in bbox_cols), f"Bounding box columns not found for row {index}"
+        assert not any(pd.isna(row[col]) for col in bbox_cols), f"Bounding box values are NaN for row {index}"
+        xmin = float(row["4-7: Img-bbox(TL_x"])
+        ymin = float(row["TL_y"])
+        xmax = float(row["BR_x"])
+        ymax = float(row["BR_y)"])
+        
+        # COCO format uses [x,y,width,height] for bbox
+        width = xmax - xmin
+        height = ymax - ymin
+        
+        # Add annotation
+        coco_data["annotations"].append({
+            "id": annotation_id,
+            "image_id": frame_id,
+            "category_id": categories[species],
+            "bbox": [xmin, ymin, width, height],
+            "area": width * height,
+        })
+        
+        annotation_id += 1
+        
+    return coco_data
 
 
-viame_annotations_to_coco(
-    data_dir / "CDFW-LakeCam-April-Tules3", Path("tmp/viame_fishtrack_coco")
+output_dir = Path("/mnt/data/dev/fish-datasets/tmp/test_CDFW-LakeCam-April-Tules3")
+coco_data = viame_annotations_to_coco(
+    data_dir / "CDFW-LakeCam-April-Tules3", output_dir
 )
+
+with open(output_dir / "annotations.json", "w") as f:
+    json.dump(coco_data, f)
+
 
 # %%
