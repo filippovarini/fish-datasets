@@ -1,4 +1,4 @@
-#%%
+# %%
 from pathlib import Path
 from datetime import datetime
 
@@ -7,7 +7,7 @@ import cv2
 
 from utils import download_and_extract_zip
 
-#%%
+# %%
 dataset_shortname = "viame_fishtrack"
 data_dir = Path("/mnt/data/tmp/") / dataset_shortname
 data_dir.mkdir(exist_ok=True)
@@ -19,50 +19,68 @@ data_path = data_dir / f"{dataset_shortname}.zip"
 
 data_dir = download_and_extract_zip(data_dir, data_url, dataset_shortname)
 
+
 # %%
+def build_image_id(video_path: Path, timestamp_str: str):
+    return f"{video_path.stem}_{timestamp_str}"
+
+
 def extract_frame_from_video(frames_path: Path, video_path: Path, timestamp_str: str):
     # Create the frames directory if it doesn't exist
     frames_path.mkdir(parents=True, exist_ok=True)
-    
+
     timestamp = datetime.strptime(timestamp_str, "%H:%M:%S.%f")
-    video_name = video_path.name
-    new_video_name = f"{video_name}_{timestamp_str}.jpg"
-    output_path = frames_path / new_video_name
-    
+    image_id = build_image_id(video_path, timestamp_str)
+    output_path = frames_path / f"{image_id}.jpg"
+
     print(f"Extracting frame from {video_path} at {timestamp}")
-    
+
     # Extract the frames
     cap = cv2.VideoCapture(video_path)
     cap.set(cv2.CAP_PROP_POS_MSEC, timestamp.timestamp() * 1000)
     ret, frame = cap.read()
     cv2.imwrite(output_path, frame)
     cap.release()
-    
+
     print(f"Saved frame to {output_path}")
     return output_path
-#%%
+
+
+# %%
 def viame_annotations_to_coco(camera_path: Path, output_dir: Path):
     csv_path = camera_path / "annotations.viame.csv"
     video_path = camera_path / f"{camera_path.name}.mp4"
-    
+
     assert csv_path.exists(), f"CSV file not found: {csv_path}"
     assert video_path.exists(), f"Video file not found: {video_path}"
-    
+
     # Load the CSV file - skip first row as it contains metadata
     df = pd.read_csv(csv_path, skiprows=lambda x: x in [1])
-    
+
     output_frames_path = output_dir / "JPEGImages"
     output_frames_path.mkdir(parents=True, exist_ok=True)
-    
+
+    # Initialize COCO format dictionary
+    coco_data = {"images": [], "annotations": [], "categories": []}
+
+    # Track image IDs (frame numbers) we've already processed
+    image_ids = set()
+
     for index, row in df.iterrows():
         frame_timestamp = row["2: Video or Image Identifier"]
-        image_filename = extract_frame_from_video(output_frames_path, video_path, frame_timestamp)
-        
-    
-viame_annotations_to_coco(data_dir / "CDFW-LakeCam-April-Tules3", Path("tmp/viame_fishtrack_coco"))
-    
-    
-    
-    
-    
+        frame_id = build_image_id(video_path, frame_timestamp)
+
+        # Add image entry if we haven't seen this frame before
+        if frame_id not in image_ids:
+            image_ids.add(frame_id)
+            image_filename = extract_frame_from_video(
+                output_frames_path, video_path, frame_timestamp
+            )
+        break
+
+
+viame_annotations_to_coco(
+    data_dir / "CDFW-LakeCam-April-Tules3", Path("tmp/viame_fishtrack_coco")
+)
+
 # %%
