@@ -170,7 +170,7 @@ Pedersen, Malte; Lehotský, Daniel; Nikolov, Ivan; Moeslund, Thomas B.  10.48550
 * Image information: N/A
 * Annotation information: N/A
 * Typical animal size in pixels: N/A
-* Code to rentdr sample annotated image: <a href="./data_preview/visualise_brackishmot.ipynb">visualise_brackishmot.ipynb</a>
+* Code to render sample annotated image: <a href="./data_preview/visualise_brackishmot.ipynb">visualise_brackishmot.ipynb</a>
   
 <img src="https://lila.science/wp-content/uploads/2017/03/brackish-150.jpg" width=150>
   
@@ -189,7 +189,8 @@ Cai, L., McGuire, N.E., Hanlon, R. et al. Semi-supervised Visual Tracking of Mar
 * Image information: N/A
 * Annotation information: N/A
 * Typical animal size in pixels: N/A
-* Code to rentdr sample annotated image: <a href="./data_preview/visualise_vmat.ipynb">visualise_vmat.ipynb</a>
+* Code to render sample annotated image: <a href="./data_preview/visualise_vmat.ipynb">visualise_vmat.ipynb</a>
+
 <img src="./data_preview/vmat_sample_image.png" width=150>
   
   
@@ -208,8 +209,7 @@ Australian Institute of Marine Science (AIMS), University of Western Australia (
 * Annotation information: bounding boxes
 * Typical animal size in pixels: N/A
   
-  
-<img src="https://camo.githubusercontent.com/339ce4034b581a4276aefd7e1294a6977b4caa2d942d8cbcb5b7d5ae27e0faeb/68747470733a2f2f6f70656e2d41494d532e6769746875622e696f2f6f7a666973682f6669736863726f70732e706e673f7261773d74727565" width=700>
+<img src="./data_preview/ozfish-sample.B000448_R.MP4.37007-700.jpg" width=700>
   
   
 ### F4K Detection and Tracking
