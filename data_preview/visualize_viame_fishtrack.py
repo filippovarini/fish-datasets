@@ -11,39 +11,72 @@ import cv2
 
 from utils import download_and_extract_zip
 
+TESTING = False
 
-class VideoFrameExtractor:
-    @staticmethod
-    def build_image_id(video_path: Path, timestamp_str: str) -> str:
-        """Generate a unique identifier for a video frame."""
-        return f"{video_path.stem}_{timestamp_str}"
 
-    @classmethod
-    def extract_frame(cls, frames_path: Path, video_path: Path, timestamp_str: str):
-        """Extract a frame from a video at the specified timestamp."""
-        frames_path.mkdir(parents=True, exist_ok=True)
+def build_image_id(video_path: Path, timestamp_str: str) -> str:
+    """Generate a unique identifier for a video frame."""
+    return f"{video_path.stem}_{timestamp_str}"
 
-        timestamp = datetime.strptime(timestamp_str, "%H:%M:%S.%f")
-        image_id = cls.build_image_id(video_path, timestamp_str)
-        output_path = frames_path / f"{image_id}.jpg"
 
-        print(f"Extracting frame from {video_path} at {timestamp}")
-
-        cap = cv2.VideoCapture(video_path)
-        cap.set(cv2.CAP_PROP_POS_MSEC, timestamp.timestamp() * 1000)
-        ret, frame = cap.read()
-        if not ret:
-            raise ValueError(f"Failed to read frame from {video_path}")
+def timestamp_to_milliseconds(timestamp_str: str) -> int:
+    """
+    Convert a timestamp string in format HH:MM:SS.ffffff to milliseconds.
+    
+    Args:
+        timestamp_str: String in format "HH:MM:SS.ffffff"
         
-        height, width, _ = frame.shape
-        cv2.imwrite(str(output_path), frame)
-        cap.release()
+    Returns:
+        Total milliseconds
+    
+    Example:
+        "00:01:49.900000" -> 109900 (milliseconds)
+    """
+    # Parse the timestamp string
+    hours, minutes, seconds = timestamp_str.split(":")
+    seconds, microseconds = seconds.split(".")
+    
+    # Convert to integers
+    hours = int(hours)
+    minutes = int(minutes)
+    seconds = int(seconds)
+    # If microseconds part has fewer than 6 digits, pad with zeros
+    microseconds = int(microseconds.ljust(6, "0"))
+    
+    # Calculate total milliseconds
+    total_milliseconds = (
+        hours * 3600 * 1000 +    # hours to ms
+        minutes * 60 * 1000 +    # minutes to ms
+        seconds * 1000 +         # seconds to ms
+        microseconds // 1000     # microseconds to ms (integer division)
+    )
+    
+    return total_milliseconds
+    
 
-        print(f"Saved frame to {output_path}")
-        return output_path, height, width
+def extract_frame(frames_path: Path, video_path: Path, timestamp_str: str, frame_id: str):
+    """Extract a frame from a video at the specified timestamp."""
+    filename = f"{frame_id}.jpg"
+    output_path = frames_path / filename
+    frames_path.mkdir(parents=True, exist_ok=True)
+
+    milliseconds = timestamp_to_milliseconds(timestamp_str)
+    print(f"Extracting frame from {video_path} at {timestamp_str}, {milliseconds} ms")
+    cap = cv2.VideoCapture(video_path)
+    cap.set(cv2.CAP_PROP_POS_MSEC, milliseconds)
+    ret, frame = cap.read()
+    if not ret:
+        raise ValueError(f"Failed to read frame from {video_path}")
+    
+    height, width, _ = frame.shape
+    cv2.imwrite(str(output_path), frame)
+    cap.release()
+
+    print(f"Saved frame to {output_path}")
+    return filename, height, width  # Return only the filename
 
 
-def viame_to_coco(camera_path: Path, output_dir: Path):
+def viame_to_coco(camera_path: Path, images_dir: Path):
     """Convert VIAME annotations to COCO format."""
     csv_path = camera_path / "annotations.viame.csv"
     video_path = camera_path / f"{camera_path.name}.mp4"
@@ -54,7 +87,7 @@ def viame_to_coco(camera_path: Path, output_dir: Path):
     # Load the CSV file - skip first row as it contains metadata
     df = pd.read_csv(csv_path, skiprows=lambda x: x in [1])
 
-    output_frames_path = output_dir / "JPEGImages"
+    output_frames_path = images_dir
     output_frames_path.mkdir(parents=True, exist_ok=True)
 
     # Initialize COCO format dictionary
@@ -71,14 +104,18 @@ def viame_to_coco(camera_path: Path, output_dir: Path):
     annotation_id = 1
 
     for index, row in df.iterrows():
+        if TESTING and index > 50:
+            # for testing purposes don't analyze full video
+            break
+        
         frame_timestamp = row["2: Video or Image Identifier"]
-        frame_id = VideoFrameExtractor.build_image_id(video_path, frame_timestamp)
+        frame_id = build_image_id(video_path, frame_timestamp)
 
         # Add image entry if we haven't seen this frame before
         if frame_id not in image_ids:
             image_ids.add(frame_id)
-            image_filename, image_height, image_width = VideoFrameExtractor.extract_frame(
-                output_frames_path, video_path, frame_timestamp
+            image_filename, image_height, image_width = extract_frame(
+                output_frames_path, video_path, frame_timestamp, frame_id
             )
             coco_data["images"].append({
                 "id": frame_id,
@@ -164,26 +201,24 @@ def visualize_dataset(dataset, num_samples=16, grid_size=(4, 4), size=(20, 12)):
 def main():
     # Dataset configuration
     dataset_shortname = "viame_fishtrack"
-    data_dir = Path("/mnt/data/tmp/") / dataset_shortname
+    data_dir = Path("/mnt/data/tmp/mfd") / dataset_shortname
     data_dir.mkdir(exist_ok=True)
     
     # Download the dataset
     data_url = "https://viame.kitware.com/api/v1/dive_dataset/export?folderIds=[%2265a1a1d1cf5a99794eaacb57%22,%2265a1a291cf5a99794eab01fb%22,%2265a1a205cf5a99794eaadbb6%22,%2265a1a223cf5a99794eaae509%22,%2265a1a20ccf5a99794eaadddd%22,%2265a1a1d1cf5a99794eaacb3d%22,%2265a1a23ecf5a99794eaaed79%22,%2265a1a20ccf5a99794eaadde0%22,%2265a1a223cf5a99794eaae50e%22,%2265a1a1d1cf5a99794eaacb52%22,%2265a1a28fcf5a99794eab01b2%22,%2265a1a22fcf5a99794eaae8c1%22,%2265a1a205cf5a99794eaadbbb%22,%2265a1a1ffcf5a99794eaad9c8%22,%2265a1a1d8cf5a99794eaacd93%22,%2265a1a1f1cf5a99794eaad548%22,%2265a1a1d1cf5a99794eaacb67%22,%2265a1a23ecf5a99794eaaed82%22,%2265a1a230cf5a99794eaae92a%22,%2265a1a244cf5a99794eaaef6b%22]"
     data_dir = download_and_extract_zip(data_dir, data_url, dataset_shortname)
     
-    # Output configuration
-    output_dir = Path("/mnt/data/dev/fish-datasets/tmp/test_CDFW-LakeCam-April-Tules3")
+    tmp_dir = Path("/mnt/data/dev/fish-datasets/tmp") / dataset_shortname
+    tmp_dir.mkdir(exist_ok=True)
     
     # Convert VIAME annotations to COCO format
     camera_path = data_dir / "CDFW-LakeCam-April-Tules3"
-    coco_data = viame_to_coco(camera_path, output_dir)
-    
-    with open(output_dir / "annotations.json", "w") as f:
+    annotations_path = tmp_dir / "annotations.json"
+    images_path = tmp_dir / "JPEGImages"
+
+    coco_data = viame_to_coco(camera_path, images_path)
+    with open(annotations_path, "w") as f:
         json.dump(coco_data, f)
-    
-    # Load and visualize the dataset
-    annotations_path = output_dir / "annotations.json"
-    images_path = output_dir / "JPEGImages"
     
     dataset = sv.DetectionDataset.from_coco(
         images_directory_path=str(images_path),
