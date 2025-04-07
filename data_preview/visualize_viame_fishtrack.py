@@ -1,8 +1,10 @@
 # %%
 from pathlib import Path
 from datetime import datetime
-import json
+import random
 
+import matplotlib.pyplot as plt
+import supervision as sv
 import pandas as pd
 import cv2
 
@@ -89,7 +91,7 @@ def viame_annotations_to_coco(camera_path: Path, output_dir: Path):
             coco_data["images"].append(
                 {
                     "id": frame_id,
-                    "file_name": image_filename,
+                    "file_name": str(image_filename),
                     "height": image_height,
                     "width": image_width,
                 }
@@ -136,14 +138,53 @@ def viame_annotations_to_coco(camera_path: Path, output_dir: Path):
         
     return coco_data
 
-
+#%% 
 output_dir = Path("/mnt/data/dev/fish-datasets/tmp/test_CDFW-LakeCam-April-Tules3")
-coco_data = viame_annotations_to_coco(
-    data_dir / "CDFW-LakeCam-April-Tules3", output_dir
+# coco_data = viame_annotations_to_coco(
+    # data_dir / "CDFW-LakeCam-April-Tules3", output_dir
+# )
+# 
+# with open(output_dir / "annotations.json", "w") as f:
+    # json.dump(coco_data, f)
+
+
+# %%
+annotations_path = output_dir / "annotations.json"
+images_path = output_dir / "JPEGImages"
+
+dataset = sv.DetectionDataset.from_coco(
+    images_directory_path=str(images_path),
+    annotations_path=str(annotations_path),
 )
 
-with open(output_dir / "annotations.json", "w") as f:
-    json.dump(coco_data, f)
+print(f"Dataset length: {len(dataset)}")
+print(f"Dataset classes: {dataset.classes}")
 
+# %%
+box_annotator = sv.BoxAnnotator()
+label_annotator = sv.LabelAnnotator()
 
+image_example = None
+
+annotated_images = []
+for _ in range(16):
+    i = random.randint(0, len(dataset))
+
+    _, image, annotations = dataset[i]
+
+    labels = [dataset.classes[class_id] for class_id in annotations.class_id]
+
+    annotated_image = image.copy()
+    annotated_image = box_annotator.annotate(annotated_image, annotations)
+    annotated_image = label_annotator.annotate(annotated_image, annotations, labels)
+    annotated_images.append(annotated_image)
+
+    if len(annotations) > 0:
+        image_example = annotated_image
+
+sv.plot_images_grid(
+    annotated_images, grid_size=(4, 4), titles=None, size=(20, 12), cmap="gray"
+)
+
+plt.imsave(f"{dataset_shortname}_sample_image.png", image_example)
 # %%
