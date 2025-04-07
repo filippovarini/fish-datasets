@@ -45,6 +45,23 @@ Farrell DM, Ferriss B, Sanderson B, Veggerby K, Robinson L, Trivedi A, Pathak S,
   
 <img src="./data_preview/noaa_puget_sample_image.png" width=700>
   
+
+### CoralScapes
+
+2,027 images captured by diver-borne GoPro cameras from a variety of global coral reefs.
+  
+* Home: <https://josauder.github.io/coralscapes/>  
+* Data downloadable via HuggingFace from <https://huggingface.co/datasets/EPFL-ECEO/coralscapes>
+* License: Apache-2.0
+* Metadata raw format: Parquet
+* Categories/species: fish, coral, human, rock, etc.
+* Vehicle type: diver
+* Image information: 2,027 images
+* Annotation information: 174,000 segmentation annotations, of which 20,849 are fish
+* Code to render sample annotated image: <a href="./data_preview/visualise_noaa_puget.py">coralscapes_to_coco.py</a>
+  
+<img src="./data_preview/coralscapes-sample.jpg" width=700>
+
   
 ### Project Natick Underwater Video
 
