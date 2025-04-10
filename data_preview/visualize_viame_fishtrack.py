@@ -2,7 +2,7 @@
 import json
 import random
 from pathlib import Path
-from datetime import datetime
+import shutil
 
 import matplotlib.pyplot as plt
 import supervision as sv
@@ -15,9 +15,9 @@ from utils import download_and_extract_zip
 TESTING = True
 
 
-def build_image_id(video_path: Path, timestamp_str: str) -> str:
+def build_image_id(video_path: Path, frame_id: str) -> str:
     """Generate a unique identifier for a video frame."""
-    return f"{video_path.stem}_{timestamp_str}"
+    return f"{video_path.stem}_{frame_id}"
 
 
 def timestamp_to_milliseconds(timestamp_str: str) -> int:
@@ -79,6 +79,76 @@ def extract_frame(
     return filename, height, width  # Return only the filename
 
 
+def get_frame_from_video(
+    row: pd.Series,
+    video_path: Path,
+    output_frames_path: Path,
+    coco_data: dict,
+    image_ids: set,
+):
+    """
+    In case where the data is from videos, this function extracts the frame
+    and stores it to the output directory.
+    """
+    frame_timestamp = row["2: Video or Image Identifier"]
+    frame_id = build_image_id(video_path, frame_timestamp)
+
+    # Add image entry if we haven't seen this frame before
+    if frame_id not in image_ids:
+        image_ids.add(frame_id)
+        image_filename, image_height, image_width = extract_frame(
+            output_frames_path, video_path, frame_timestamp, frame_id
+        )
+        coco_data["images"].append(
+            {
+                "id": frame_id,
+                "file_name": str(image_filename),
+                "height": image_height,
+                "width": image_width,
+            }
+        )
+
+    return frame_id
+
+
+def get_frame_from_images(
+    row: pd.Series,
+    camera_path: Path,
+    output_frames_path: Path,
+    coco_data: dict,
+    image_ids: set,
+):
+    """
+    In case where the data is from images, this function extracts the frame
+    and stores it to the output directory.
+    """
+    annotatoin_frame_id = row["2: Video or Image Identifier"]
+    frame_id = build_image_id(camera_path, annotatoin_frame_id)
+    
+    if frame_id not in image_ids:
+        frame_path = camera_path / annotatoin_frame_id
+        assert frame_path.exists(), f"Frame not found: {frame_path}"
+
+        height, width, _ = cv2.imread(str(frame_path)).shape
+
+        # Save frame 
+        print(f"Saving frame {frame_id} from {camera_path} to {output_frames_path}")
+        image_ids.add(frame_id)
+        shutil.copy(frame_path, output_frames_path / frame_id)
+        
+        # Save frame to coco annotations
+        coco_data["images"].append(
+            {
+                "id": frame_id,
+                "file_name": str(frame_path),
+                "height": height,
+                "width": width,
+            }
+        )
+
+    return frame_id
+
+
 def viame_to_coco(camera_path: Path, images_dir: Path, coco_data: dict):
     """
     Converts VIAME annotations to COCO format.
@@ -110,10 +180,6 @@ def viame_to_coco(camera_path: Path, images_dir: Path, coco_data: dict):
     output_frames_path = images_dir
     output_frames_path.mkdir(parents=True, exist_ok=True)
 
-    # Keep track of categories and assigned IDs
-    categories = {}
-    category_id = 1
-
     # Track image IDs (frame numbers) we've already processed
     image_ids = set()
 
@@ -121,42 +187,18 @@ def viame_to_coco(camera_path: Path, images_dir: Path, coco_data: dict):
     annotation_id = 1
 
     for index, row in df.iterrows():
-        if TESTING and index > 50:
+        if TESTING and index > 10:
             # for testing purposes don't analyze full video
             break
-
-        frame_timestamp = row["2: Video or Image Identifier"]
-        frame_id = build_image_id(video_path, frame_timestamp)
-
-        # Add image entry if we haven't seen this frame before
-        if frame_id not in image_ids:
-            image_ids.add(frame_id)
-            image_filename, image_height, image_width = extract_frame(
-                output_frames_path, video_path, frame_timestamp, frame_id
-            )
-            coco_data["images"].append(
-                {
-                    "id": frame_id,
-                    "file_name": str(image_filename),
-                    "height": image_height,
-                    "width": image_width,
-                }
-            )
+        
+        if is_video:
+            frame_id = get_frame_from_video(row, video_path, output_frames_path, coco_data, image_ids)
+        else:
+            frame_id = get_frame_from_images(row, camera_path, output_frames_path, coco_data, image_ids)
 
         # Process species information
         species = row["10-11+: Repeated Species"]
         assert not pd.isna(species), f"Species is NaN for row {index}"
-
-        # Add new category if not seen before
-        if species not in categories:
-            categories[species] = category_id
-            coco_data["categories"].append(
-                {
-                    "id": category_id,
-                    "name": species,
-                }
-            )
-            category_id += 1
 
         # Process bounding box coordinates
         bbox_cols = ["4-7: Img-bbox(TL_x", "TL_y", "BR_x", "BR_y)"]
@@ -181,7 +223,7 @@ def viame_to_coco(camera_path: Path, images_dir: Path, coco_data: dict):
             {
                 "id": annotation_id,
                 "image_id": frame_id,
-                "category_id": categories[species],
+                "category_id": 1, # We only keep one fish category
                 "bbox": [xmin, ymin, width, height],
                 "area": width * height,
             }
@@ -233,7 +275,8 @@ def main():
     tmp_dir.mkdir(exist_ok=True)
 
     # Convert VIAME annotations to COCO format for all cameras
-    coco_data = {"images": [], "annotations": [], "categories": []}
+    fish_category = {"id": 1, "name": "fish"} # We only keep one fish category
+    coco_data = {"images": [], "annotations": [], "categories": [fish_category]}
     images_output_path = tmp_dir / "JPEGImages"
     images_output_path.mkdir()
 
