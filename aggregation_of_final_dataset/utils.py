@@ -10,19 +10,16 @@ settings = Settings()
 
 
 def compress_annotations_to_single_category(
-    annotations_path: Path, category_names_to_keep: list[str]
+    annotations_path: Path, category_names_to_keep: list[str], output_path: Path
 ):
     """
     Discards all annotations except for the ones in the category_names_to_keep list.
     For the ones that are kept, it renames all categories to a single category, fish.
     """
     # Check if new annotation file already exists
-    new_annotation_path = (
-        annotations_path.parent / f"{annotations_path.name}_single_category.json"
-    )
-    if new_annotation_path.exists():
-        print(f"New annotation file already exists at {new_annotation_path}")
-        return new_annotation_path
+    if output_path.exists():
+        print(f"New annotation file already exists at {output_path}")
+        return output_path
 
     # Load the annotations
     with open(annotations_path, "r") as f:
@@ -46,15 +43,19 @@ def compress_annotations_to_single_category(
             annotation["category_id"] = Settings.coco_category_id
             new_annotations.append(annotation)
 
+    # Print the number of annotations before and after compression
+    original_annotation_count = len(coco_data["annotations"])
+    compressed_annotation_count = len(new_annotations)
+    print(f"Original annotation count: {original_annotation_count}")
+    print(f"Compressed annotation count: {compressed_annotation_count}")
+
     # Compress categories to a single category
     coco_data["categories"] = Settings.coco_categories
     coco_data["annotations"] = new_annotations
 
     # Store the new annotation file
-    with open(new_annotation_path, "w") as f:
+    with open(output_path, "w") as f:
         json.dump(coco_data, f, indent=2)
-
-    return new_annotation_path
 
 
 def split_coco_dataset_into_train_validation(
