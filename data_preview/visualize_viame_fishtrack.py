@@ -12,7 +12,12 @@ import cv2
 from utils import download_and_extract_zip
 
 
-TESTING = True
+TESTING = False
+all_species = set()
+
+# Avoid these categories
+def _is_non_fish(species: str) -> bool:
+    return species.startswith("non_fish")
 
 
 def build_image_id(video_path: Path, frame_id: str) -> str:
@@ -64,7 +69,6 @@ def extract_frame(
     frames_path.mkdir(parents=True, exist_ok=True)
 
     milliseconds = timestamp_to_milliseconds(timestamp_str)
-    print(f"Extracting frame from {video_path} at {timestamp_str}, {milliseconds} ms")
     cap = cv2.VideoCapture(video_path)
     cap.set(cv2.CAP_PROP_POS_MSEC, milliseconds)
     ret, frame = cap.read()
@@ -75,7 +79,6 @@ def extract_frame(
     cv2.imwrite(str(output_path), frame)
     cap.release()
 
-    print(f"Saved frame to {output_path}")
     return filename, height, width  # Return only the filename
 
 
@@ -107,6 +110,8 @@ def get_frame_from_video(
                 "width": image_width,
             }
         )
+    else:
+        print(f"Frame {frame_id} already exists, skipping extraction")
 
     return frame_id
 
@@ -132,19 +137,21 @@ def get_frame_from_images(
         height, width, _ = cv2.imread(str(frame_path)).shape
 
         # Save frame 
-        print(f"Saving frame {frame_id} from {camera_path} to {output_frames_path}")
         image_ids.add(frame_id)
-        shutil.copy(frame_path, output_frames_path / frame_id)
+        new_frame_path = output_frames_path / frame_id
+        shutil.copy(frame_path, new_frame_path)
         
         # Save frame to coco annotations
         coco_data["images"].append(
             {
                 "id": frame_id,
-                "file_name": str(frame_path),
+                "file_name": str(new_frame_path),
                 "height": height,
                 "width": width,
             }
         )
+    else:
+        print(f"Frame {frame_id} already exists, skipping extraction")
 
     return frame_id
 
@@ -159,6 +166,8 @@ def viame_to_coco(camera_path: Path, images_dir: Path, coco_data: dict):
         coco_annotations: Dictionary to save the COCO annotations. We use the
         same dictionary for all cameras, to continuosly populate it.
     """
+    global all_species
+    
     csv_path = camera_path / "annotations.viame.csv"
     assert csv_path.exists(), f"CSV file not found: {csv_path}"
 
@@ -187,18 +196,23 @@ def viame_to_coco(camera_path: Path, images_dir: Path, coco_data: dict):
     annotation_id = 1
 
     for index, row in df.iterrows():
-        if TESTING and index > 10:
+        if TESTING and index > 100:
             # for testing purposes don't analyze full video
             break
+        
+        # Skip non-fish categories
+        species = row["10-11+: Repeated Species"]
+        if species not in all_species:
+            all_species.add(species)
+            print(f"Processing species: {species}")
+        if not pd.notna(species) or _is_non_fish(species):
+            print(f"Skipping row because of non-fish category: {species}")
+            continue
         
         if is_video:
             frame_id = get_frame_from_video(row, video_path, output_frames_path, coco_data, image_ids)
         else:
             frame_id = get_frame_from_images(row, camera_path, output_frames_path, coco_data, image_ids)
-
-        # Process species information
-        species = row["10-11+: Repeated Species"]
-        assert not pd.isna(species), f"Species is NaN for row {index}"
 
         # Process bounding box coordinates
         bbox_cols = ["4-7: Img-bbox(TL_x", "TL_y", "BR_x", "BR_y)"]
@@ -239,13 +253,18 @@ def visualize_dataset(dataset, num_samples=16, grid_size=(4, 4), size=(20, 12)):
 
     image_example = None
     annotated_images = []
+    image_names = []
 
     for _ in range(num_samples):
         i = random.randint(0, len(dataset) - 1)  # Avoid index out of range
 
-        _, image, annotations = dataset[i]
+        image_path, image, annotations = dataset[i]
         labels = [dataset.classes[class_id] for class_id in annotations.class_id]
 
+        # Get image name
+        image_name = Path(image_path).stem
+        image_names.append(image_name)
+        
         annotated_image = image.copy()
         annotated_image = box_annotator.annotate(annotated_image, annotations)
         annotated_image = label_annotator.annotate(annotated_image, annotations, labels)
@@ -255,7 +274,7 @@ def visualize_dataset(dataset, num_samples=16, grid_size=(4, 4), size=(20, 12)):
             image_example = annotated_image
 
     sv.plot_images_grid(
-        annotated_images, grid_size=grid_size, titles=None, size=size, cmap="gray"
+        annotated_images, grid_size=grid_size, titles=image_names, size=size, cmap="gray"
     )
 
     return image_example
@@ -277,6 +296,8 @@ def main():
     # Convert VIAME annotations to COCO format for all cameras
     fish_category = {"id": 1, "name": "fish"} # We only keep one fish category
     coco_data = {"images": [], "annotations": [], "categories": [fish_category]}
+
+    # Create output directories
     images_output_path = tmp_dir / "JPEGImages"
     images_output_path.mkdir()
 
