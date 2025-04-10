@@ -3,7 +3,9 @@ from dataclasses import dataclass
 
 @dataclass
 class Settings:
-    base_dir: Path = Path("/mnt/data/dev/fish-datasets/final_dataset")
+    raw_dir: Path = Path("/mnt/data/dev/fish-datasets/data/raw")
+    processed_dir: Path = Path("/mnt/data/dev/fish-datasets/data/final")
+    
     train_dataset_suffix: str = "_train"
     val_dataset_suffix: str = "_val"
     images_folder_name: str = "JPEGImages"

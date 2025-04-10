@@ -9,7 +9,7 @@ import supervision as sv
 import pandas as pd
 import cv2
 
-from utils import download_and_extract_zip
+from data_preview.utils import download_and_extract_zip
 
 
 DATASET_SHORTNAME = "viame_fishtrack"

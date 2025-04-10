@@ -35,8 +35,6 @@ def download_and_extract_zip(data_dir, data_url, dataset_shortname):
         download_file(data_url, data_path)
         print("Extracting data...")
         extract_zip(data_path, data_dir)
-        print("Removing Zipped files...")
-        data_path.unlink()
     return data_dir
 
 
