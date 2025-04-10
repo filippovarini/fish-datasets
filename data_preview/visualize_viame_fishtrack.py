@@ -73,10 +73,12 @@ def extract_frame(
     cap.set(cv2.CAP_PROP_POS_MSEC, milliseconds)
     ret, frame = cap.read()
     if not ret:
-        raise ValueError(f"Failed to read frame from {video_path}")
+        raise ValueError(f"Failed to read frame {frame_id} from {video_path} at {timestamp_str}")
 
     height, width, _ = frame.shape
-    cv2.imwrite(str(output_path), frame)
+    if not output_path.exists():
+        cv2.imwrite(str(output_path), frame)
+
     cap.release()
 
     return filename, height, width  # Return only the filename
@@ -110,8 +112,6 @@ def get_frame_from_video(
                 "width": image_width,
             }
         )
-    else:
-        print(f"Frame {frame_id} already exists, skipping extraction")
 
     return frame_id
 
@@ -150,8 +150,6 @@ def get_frame_from_images(
                 "width": width,
             }
         )
-    else:
-        print(f"Frame {frame_id} already exists, skipping extraction")
 
     return frame_id
 
@@ -209,11 +207,15 @@ def viame_to_coco(camera_path: Path, images_dir: Path, coco_data: dict):
             print(f"Skipping row because of non-fish category: {species}")
             continue
         
-        if is_video:
-            frame_id = get_frame_from_video(row, video_path, output_frames_path, coco_data, image_ids)
-        else:
-            frame_id = get_frame_from_images(row, camera_path, output_frames_path, coco_data, image_ids)
-
+        try:
+            if is_video:
+                frame_id = get_frame_from_video(row, video_path, output_frames_path, coco_data, image_ids)
+            else:
+                frame_id = get_frame_from_images(row, camera_path, output_frames_path, coco_data, image_ids)
+        except Exception as e:
+            print(f"Error processing row {index}: {e}")
+            continue
+        
         # Process bounding box coordinates
         bbox_cols = ["4-7: Img-bbox(TL_x", "TL_y", "BR_x", "BR_y)"]
         assert all(
@@ -290,7 +292,7 @@ def main():
     data_url = "https://viame.kitware.com/api/v1/dive_dataset/export?folderIds=[%2265a1a1d1cf5a99794eaacb57%22,%2265a1a291cf5a99794eab01fb%22,%2265a1a205cf5a99794eaadbb6%22,%2265a1a223cf5a99794eaae509%22,%2265a1a20ccf5a99794eaadddd%22,%2265a1a1d1cf5a99794eaacb3d%22,%2265a1a23ecf5a99794eaaed79%22,%2265a1a20ccf5a99794eaadde0%22,%2265a1a223cf5a99794eaae50e%22,%2265a1a1d1cf5a99794eaacb52%22,%2265a1a28fcf5a99794eab01b2%22,%2265a1a22fcf5a99794eaae8c1%22,%2265a1a205cf5a99794eaadbbb%22,%2265a1a1ffcf5a99794eaad9c8%22,%2265a1a1d8cf5a99794eaacd93%22,%2265a1a1f1cf5a99794eaad548%22,%2265a1a1d1cf5a99794eaacb67%22,%2265a1a23ecf5a99794eaaed82%22,%2265a1a230cf5a99794eaae92a%22,%2265a1a244cf5a99794eaaef6b%22]"
     data_dir = download_and_extract_zip(data_dir, data_url, dataset_shortname)
 
-    tmp_dir = Path("/mnt/data/dev/fish-datasets/tmp") / dataset_shortname
+    tmp_dir = Path("/mnt/data/dev/fish-datasets/final_dataset") / dataset_shortname
     tmp_dir.mkdir(exist_ok=True)
 
     # Convert VIAME annotations to COCO format for all cameras
@@ -304,7 +306,6 @@ def main():
     for camera_path in data_dir.glob("*"):
         print(f"📸 Processing camera: {camera_path}...")
         if not camera_path.is_dir():
-            print(f"⚠️ {camera_path} is not a directory, skipping")
             continue
 
         viame_to_coco(camera_path, images_output_path, coco_data)
