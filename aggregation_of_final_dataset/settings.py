@@ -7,7 +7,6 @@ class Settings:
     train_dataset_suffix: str = "_train"
     val_dataset_suffix: str = "_val"
     images_folder_name: str = "JPEGImages"
-    coco_file_name: str = "coco_annotations.json"
 
     # We only use one category for the fish
     coco_category_id: int = 1

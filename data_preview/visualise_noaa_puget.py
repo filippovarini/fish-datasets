@@ -3,7 +3,13 @@ import supervision as sv
 from pathlib import Path
 import json
 
-from utils import visualize_supervision_dataset, download_file, extract_zip
+from data_preview.utils import visualize_supervision_dataset, download_file, extract_zip
+
+
+DATASET_SHORTNAME = "noaa_puget"
+DATA_DIR = Path("/mnt/data/dev/fish-datasets/data/raw") / DATASET_SHORTNAME
+ANNOTATIONS_PATH = DATA_DIR / "noaa_estuary_fish-2023.08.19.json"
+IMAGES_PATH = DATA_DIR / "JPEGImages"
 
 
 def clean_annotations(annotations_path: Path):
@@ -36,31 +42,35 @@ def extract_example_image(images_path: Path, annotations_path: Path, dataset_sho
 
     image_example = visualize_supervision_dataset(dataset)
     plt.imsave(f"{dataset_shortname}_sample_image.png", image_example)
+    
 
-
-def main():
-    dataset_shortname = "noaa_puget"
-    data_dir = Path("/mnt/data/dev/fish-datasets/data/raw") / dataset_shortname
+def download_data(data_dir: Path):
     data_dir.mkdir(exist_ok=True, parents=True)
     
     data_url = "https://storage.googleapis.com/public-datasets-lila/noaa-psnf/noaa_estuary_fish-images.zip"
     annotations_url = "https://storage.googleapis.com/public-datasets-lila/noaa-psnf/noaa_estuary_fish-annotations-2023.08.19.zip"
 
-    data_path = data_dir / "images.zip"
-    annotations_path = data_dir / "annotations.zip"
+    data_path_zip = data_dir / "images.zip"
+    annotations_path_zip = data_dir / "annotations.zip"
     
-    download_file(data_url, data_path)
-    download_file(annotations_url, annotations_path)
+    if not IMAGES_PATH.exists() or not ANNOTATIONS_PATH.exists():
+        print("Extracting data...")
+        download_file(data_url, data_path_zip)
+        download_file(annotations_url, annotations_path_zip)
+        
+        extract_zip(data_path_zip, DATA_DIR)
+        extract_zip(annotations_path_zip, DATA_DIR)
+    else:
+        print("Data already downloaded and extracted")
     
-    extract_zip(data_path, data_dir)
-    extract_zip(annotations_path, data_dir)
+
+
+def main():
+    download_data(DATA_DIR)
     
-    annotations_path = data_dir / "noaa_estuary_fish-2023.08.19.json"
-    images_path = data_dir / "JPEGImages"
+    clean_annotations(ANNOTATIONS_PATH)
     
-    clean_annotations(annotations_path)
-    
-    extract_example_image(images_path, annotations_path, dataset_shortname)
+    extract_example_image(IMAGES_PATH, ANNOTATIONS_PATH, DATASET_SHORTNAME)
     
     
 if __name__ == "__main__":
