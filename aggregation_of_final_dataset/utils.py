@@ -6,32 +6,56 @@ from typing import Callable, Any
 from aggregation_of_final_dataset.settings import Settings
 
 
-def compress_annotations_to_single_category(annotations_path: Path):
-    annotations_filename = annotations_path.name
-    new_annotation_path = annotations_path.parent / f"{annotations_filename}_single_category.json"
-    
+settings = Settings()
+
+
+def compress_annotations_to_single_category(
+    annotations_path: Path, category_names_to_keep: list[str]
+):
+    """
+    Discards all annotations except for the ones in the category_names_to_keep list.
+    For the ones that are kept, it renames all categories to a single category, fish.
+    """
+    # Check if new annotation file already exists
+    new_annotation_path = (
+        annotations_path.parent / f"{annotations_path.name}_single_category.json"
+    )
     if new_annotation_path.exists():
         print(f"New annotation file already exists at {new_annotation_path}")
         return new_annotation_path
-    
+
+    # Load the annotations
     with open(annotations_path, "r") as f:
         coco_data = json.load(f)
 
+    # Check existing categories
     all_category_names = {c["name"] for c in coco_data["categories"]}
+    print(
+        f"Found categories {all_category_names} but only keeping {category_names_to_keep}"
+    )
 
+    # Filter annotations to only include the ones in the category_names_to_keep list
+    new_annotations = []
     for annotation in coco_data["annotations"]:
-        annotation["category_id"] = Settings.coco_category_id
-    
-    coco_data["categories"] = Settings.coco_categories
+        annotation_category = coco_data["categories"][annotation["category_id"]]
+        assert (
+            annotation["category_id"] == annotation_category["id"]
+        ), f"Annotation category_id is {annotation['category_id']} not {annotation_category['id']}"
+        
+        if annotation_category["name"] in category_names_to_keep:
+            annotation["category_id"] = Settings.coco_category_id
+            new_annotations.append(annotation)
 
+    # Compress categories to a single category
+    coco_data["categories"] = Settings.coco_categories
+    coco_data["annotations"] = new_annotations
+
+    # Store the new annotation file
     with open(new_annotation_path, "w") as f:
         json.dump(coco_data, f, indent=2)
-        
-    
-    print(f"Found the following categories in the dataset: {all_category_names}")
-    
+
     return new_annotation_path
-    
+
 
 def split_coco_dataset_into_train_validation(
     dataset_shortname: str,
@@ -58,8 +82,6 @@ def split_coco_dataset_into_train_validation(
       - JPEGImages/
       - coco_annotations.json
     """
-    settings = Settings()
-
     # Ensure source dataset exists
     if not source_dataset_path.exists():
         raise FileNotFoundError(f"Source dataset not found at {source_dataset_path}")
