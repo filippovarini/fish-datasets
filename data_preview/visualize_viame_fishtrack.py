@@ -1,4 +1,4 @@
-# data_preview/visualize_viame_fishtrack.py
+#%%
 import json
 import random
 from pathlib import Path
@@ -11,8 +11,8 @@ import cv2
 
 from utils import download_and_extract_zip
 
-TESTING = False
 
+TESTING = True
 
 def build_image_id(video_path: Path, timestamp_str: str) -> str:
     """Generate a unique identifier for a video frame."""
@@ -230,11 +230,13 @@ def main():
     
     # Visualize random samples from the dataset
     image_example = visualize_dataset(dataset)
+    output_dir = Path("/mnt/data/dev/fish-datasets/data_preview")
     
     # Save a sample image
     if image_example is not None:
-        plt.imsave(f"{dataset_shortname}_sample_image.png", image_example)
+        plt.imsave(output_dir / f"{dataset_shortname}_sample_image.png", image_example)
 
 
 if __name__ == "__main__":
     main()
+# %%
