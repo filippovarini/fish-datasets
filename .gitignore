@@ -7,3 +7,4 @@ local
 .ipynb_checkpoints
 .env
 final_dataset/
+data/
