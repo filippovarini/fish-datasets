@@ -3,7 +3,7 @@ import json
 import random
 from pathlib import Path
 import shutil
-
+from typing import Tuple
 import matplotlib.pyplot as plt
 import supervision as sv
 import pandas as pd
@@ -12,8 +12,10 @@ import cv2
 from utils import download_and_extract_zip
 
 
+DATASET_SHORTNAME = "viame_fishtrack"
 TESTING = False
 all_species = set()
+
 
 # Avoid these categories
 def _is_non_fish(species: str) -> bool:
@@ -73,7 +75,9 @@ def extract_frame(
     cap.set(cv2.CAP_PROP_POS_MSEC, milliseconds)
     ret, frame = cap.read()
     if not ret:
-        raise ValueError(f"Failed to read frame {frame_id} from {video_path} at {timestamp_str}")
+        raise ValueError(
+            f"Failed to read frame {frame_id} from {video_path} at {timestamp_str}"
+        )
 
     height, width, _ = frame.shape
     if not output_path.exists():
@@ -129,18 +133,18 @@ def get_frame_from_images(
     """
     annotatoin_frame_id = row["2: Video or Image Identifier"]
     frame_id = build_image_id(camera_path, annotatoin_frame_id)
-    
+
     if frame_id not in image_ids:
         frame_path = camera_path / annotatoin_frame_id
         assert frame_path.exists(), f"Frame not found: {frame_path}"
 
         height, width, _ = cv2.imread(str(frame_path)).shape
 
-        # Save frame 
+        # Save frame
         image_ids.add(frame_id)
         new_frame_path = output_frames_path / frame_id
         shutil.copy(frame_path, new_frame_path)
-        
+
         # Save frame to coco annotations
         coco_data["images"].append(
             {
@@ -165,7 +169,7 @@ def viame_to_coco(camera_path: Path, images_dir: Path, coco_data: dict):
         same dictionary for all cameras, to continuosly populate it.
     """
     global all_species
-    
+
     csv_path = camera_path / "annotations.viame.csv"
     assert csv_path.exists(), f"CSV file not found: {csv_path}"
 
@@ -197,7 +201,7 @@ def viame_to_coco(camera_path: Path, images_dir: Path, coco_data: dict):
         if TESTING and index > 100:
             # for testing purposes don't analyze full video
             break
-        
+
         # Skip non-fish categories
         species = row["10-11+: Repeated Species"]
         if species not in all_species:
@@ -206,16 +210,20 @@ def viame_to_coco(camera_path: Path, images_dir: Path, coco_data: dict):
         if not pd.notna(species) or _is_non_fish(species):
             print(f"Skipping row because of non-fish category: {species}")
             continue
-        
+
         try:
             if is_video:
-                frame_id = get_frame_from_video(row, video_path, output_frames_path, coco_data, image_ids)
+                frame_id = get_frame_from_video(
+                    row, video_path, output_frames_path, coco_data, image_ids
+                )
             else:
-                frame_id = get_frame_from_images(row, camera_path, output_frames_path, coco_data, image_ids)
+                frame_id = get_frame_from_images(
+                    row, camera_path, output_frames_path, coco_data, image_ids
+                )
         except Exception as e:
             print(f"Error processing row {index}: {e}")
             continue
-        
+
         # Process bounding box coordinates
         bbox_cols = ["4-7: Img-bbox(TL_x", "TL_y", "BR_x", "BR_y)"]
         assert all(
@@ -239,7 +247,7 @@ def viame_to_coco(camera_path: Path, images_dir: Path, coco_data: dict):
             {
                 "id": annotation_id,
                 "image_id": frame_id,
-                "category_id": 1, # We only keep one fish category
+                "category_id": 1,  # We only keep one fish category
                 "bbox": [xmin, ymin, width, height],
                 "area": width * height,
             }
@@ -266,7 +274,7 @@ def visualize_dataset(dataset, num_samples=16, grid_size=(4, 4), size=(20, 12)):
         # Get image name
         image_name = Path(image_path).stem
         image_names.append(image_name)
-        
+
         annotated_image = image.copy()
         annotated_image = box_annotator.annotate(annotated_image, annotations)
         annotated_image = label_annotator.annotate(annotated_image, annotations, labels)
@@ -276,34 +284,36 @@ def visualize_dataset(dataset, num_samples=16, grid_size=(4, 4), size=(20, 12)):
             image_example = annotated_image
 
     sv.plot_images_grid(
-        annotated_images, grid_size=grid_size, titles=image_names, size=size, cmap="gray"
+        annotated_images,
+        grid_size=grid_size,
+        titles=image_names,
+        size=size,
+        cmap="gray",
     )
 
     return image_example
 
 
-def main():
-    # Dataset configuration
-    dataset_shortname = "viame_fishtrack"
-    data_dir = Path("/mnt/data/tmp/mfd") / dataset_shortname
-    data_dir.mkdir(exist_ok=True)
-
-    # Download the dataset
-    data_url = "https://viame.kitware.com/api/v1/dive_dataset/export?folderIds=[%2265a1a1d1cf5a99794eaacb57%22,%2265a1a291cf5a99794eab01fb%22,%2265a1a205cf5a99794eaadbb6%22,%2265a1a223cf5a99794eaae509%22,%2265a1a20ccf5a99794eaadddd%22,%2265a1a1d1cf5a99794eaacb3d%22,%2265a1a23ecf5a99794eaaed79%22,%2265a1a20ccf5a99794eaadde0%22,%2265a1a223cf5a99794eaae50e%22,%2265a1a1d1cf5a99794eaacb52%22,%2265a1a28fcf5a99794eab01b2%22,%2265a1a22fcf5a99794eaae8c1%22,%2265a1a205cf5a99794eaadbbb%22,%2265a1a1ffcf5a99794eaad9c8%22,%2265a1a1d8cf5a99794eaacd93%22,%2265a1a1f1cf5a99794eaad548%22,%2265a1a1d1cf5a99794eaacb67%22,%2265a1a23ecf5a99794eaaed82%22,%2265a1a230cf5a99794eaae92a%22,%2265a1a244cf5a99794eaaef6b%22]"
-    data_dir = download_and_extract_zip(data_dir, data_url, dataset_shortname)
-
-    tmp_dir = Path("/mnt/data/dev/fish-datasets/final_dataset") / dataset_shortname
-    tmp_dir.mkdir(exist_ok=True)
+def download_data_and_build_coco_dataset(
+    raw_data_download_path: Path, coco_dataset_path: Path, data_url: str
+) -> Tuple[Path, Path]:
+    """
+    Downloads both the VIAME Train and Test datasets and builds a single
+    COCO dataset with all the data.
+    """
+    downloaded_data_path = download_and_extract_zip(
+        raw_data_download_path, data_url, DATASET_SHORTNAME
+    )
 
     # Convert VIAME annotations to COCO format for all cameras
-    fish_category = {"id": 1, "name": "fish"} # We only keep one fish category
+    fish_category = {"id": 1, "name": "fish"}  # We only keep one fish category
     coco_data = {"images": [], "annotations": [], "categories": [fish_category]}
 
     # Create output directories
-    images_output_path = tmp_dir / "JPEGImages"
+    images_output_path = coco_dataset_path / "JPEGImages"
     images_output_path.mkdir()
 
-    for camera_path in data_dir.glob("*"):
+    for camera_path in downloaded_data_path.glob("*"):
         print(f"📸 Processing camera: {camera_path}...")
         if not camera_path.is_dir():
             continue
@@ -313,9 +323,29 @@ def main():
         print(f"Images loaded in coco dataset: {len(coco_data['images'])}")
 
     # Save the COCO annotations
-    annotations_path = tmp_dir / "annotations.json"
+    annotations_path = coco_dataset_path / "annotations.json"
     with open(annotations_path, "w") as f:
         json.dump(coco_data, f)
+
+    return images_output_path, annotations_path
+
+
+def main():
+    # Dataset configuration
+    raw_data_download_path = Path("/mnt/data/tmp/mfd") / DATASET_SHORTNAME
+    raw_data_download_path.mkdir(exist_ok=True)
+
+    # Here we only download the test data, for demonstration. To see how to download both datasets,
+    # check the aggregation_of_final_dataset Directory
+    test_data_url = "https://viame.kitware.com/api/v1/dive_dataset/export?folderIds=[%2265a1a1d1cf5a99794eaacb57%22,%2265a1a291cf5a99794eab01fb%22,%2265a1a205cf5a99794eaadbb6%22,%2265a1a223cf5a99794eaae509%22,%2265a1a20ccf5a99794eaadddd%22,%2265a1a1d1cf5a99794eaacb3d%22,%2265a1a23ecf5a99794eaaed79%22,%2265a1a20ccf5a99794eaadde0%22,%2265a1a223cf5a99794eaae50e%22,%2265a1a1d1cf5a99794eaacb52%22,%2265a1a28fcf5a99794eab01b2%22,%2265a1a22fcf5a99794eaae8c1%22,%2265a1a205cf5a99794eaadbbb%22,%2265a1a1ffcf5a99794eaad9c8%22,%2265a1a1d8cf5a99794eaacd93%22,%2265a1a1f1cf5a99794eaad548%22,%2265a1a1d1cf5a99794eaacb67%22,%2265a1a23ecf5a99794eaaed82%22,%2265a1a230cf5a99794eaae92a%22,%2265a1a244cf5a99794eaaef6b%22]"
+    test_coco_dataset_path = (
+        Path("/mnt/data/dev/fish-datasets/final_dataset") / DATASET_SHORTNAME / "test"
+    )
+    test_coco_dataset_path.mkdir(parents=True)
+
+    images_output_path, annotations_path = download_data_and_build_coco_dataset(
+        raw_data_download_path, test_coco_dataset_path, test_data_url
+    )
 
     dataset = sv.DetectionDataset.from_coco(
         images_directory_path=str(images_output_path),
@@ -331,7 +361,7 @@ def main():
 
     # Save a sample image
     if image_example is not None:
-        plt.imsave(output_dir / f"{dataset_shortname}_sample_image.png", image_example)
+        plt.imsave(output_dir / f"{DATASET_SHORTNAME}_sample_image.png", image_example)
 
 
 if __name__ == "__main__":
