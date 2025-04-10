@@ -252,15 +252,15 @@ Joly A., Goeau H., Glotin H., Spampinato C., Bonnet P., Vellinga W.-P., Planquè
 
 Several thousand BRUV images with bounding boxes on fish and bait
   
-* Data downloadable from Viame (<a href="https://viame.kitware.com/#/collection/62afcb66dddafb68c8442126">download link</a>)
+* Data downloadable from Viame (<a href="https://viame.kitware.com/#/collection/65a140e8a4c218785d408b42">download link</a>)
 * Metadata raw format: N/A
-* Categories/species: N/A
+* Categories/species: General Fish, Fish Species, Bait and Algae
 * Vehicle type: BRUV
-* Image information: thousands of images
+* Image information: ~20,000
 * Annotation information: bounding boxes
-* Typical animal size in pixels: N/A
+* Code to rentdr sample annotated image: <a href="./data_preview/visualize_viame.py">visualize_viame.py</a>
   
-<img src="http://lila.science/wp-content/uploads/2017/03/fishtrack-boxes-150-1.png" width=150>
+<img src="./data_preview/viame_fishtrack_sample_image.png" width=150>
   
   
 ### Brackish Underwater Dataset
