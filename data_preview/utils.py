@@ -24,8 +24,8 @@ def extract_zip(zip_path, extract_to):
     print(f"Extraction complete: {zip_path}")
     print("Removing Zipped files...")
     zip_path.unlink()
-    
-    
+
+
 def download_and_extract_zip(data_dir, data_url, dataset_shortname):
     data_path = data_dir / f"{dataset_shortname}.zip"
     if data_dir.exists() and len(list(data_dir.glob("*"))) > 0:
@@ -38,11 +38,25 @@ def download_and_extract_zip(data_dir, data_url, dataset_shortname):
     return data_dir
 
 
-def visualize_supervision_dataset(dataset, num_samples=16, grid_size=(4, 4), size=(20, 12)):
+def get_annotation_count_from_supervision_dataset(dataset):
+    # Method 1: Count all annotations across all images
+    total_annotations = 0
+    for image_name, annotations_list in dataset.annotations.items():
+        total_annotations += len(annotations_list)
+
+    return total_annotations
+
+
+def visualize_supervision_dataset(
+    dataset, num_samples=16, grid_size=(4, 4), size=(20, 12)
+):
     """Visualize random samples from a dataset with bounding boxes and labels."""
     print(f"Dataset length: {len(dataset)}")
     print(f"Dataset classes: {dataset.classes}")
-    
+    print(
+        f"Dataset annotation count: {get_annotation_count_from_supervision_dataset(dataset)}"
+    )
+
     box_annotator = sv.BoxAnnotator()
     label_annotator = sv.LabelAnnotator()
 
@@ -59,7 +73,7 @@ def visualize_supervision_dataset(dataset, num_samples=16, grid_size=(4, 4), siz
         # Get image name
         image_name = Path(image_path).stem
         image_names.append(image_name)
-        
+
         annotated_image = image.copy()
         annotated_image = box_annotator.annotate(annotated_image, annotations)
         annotated_image = label_annotator.annotate(annotated_image, annotations, labels)
@@ -69,7 +83,26 @@ def visualize_supervision_dataset(dataset, num_samples=16, grid_size=(4, 4), siz
             image_example = annotated_image
 
     sv.plot_images_grid(
-        annotated_images, grid_size=grid_size, titles=image_names, size=size, cmap="gray"
+        annotated_images,
+        grid_size=grid_size,
+        titles=image_names,
+        size=size,
+        cmap="gray",
     )
 
+    return image_example
+
+
+def build_and_visualize_supervision_dataset_from_coco_dataset(
+    images_dir: Path, annotations_path: Path
+):
+    """
+    Given the path to COCO annotations and images, build a Supervision dataset and visualize it.
+    """
+    dataset = sv.DetectionDataset.from_coco(
+        images_directory_path=images_dir,
+        annotations_path=annotations_path,
+    )
+
+    image_example = visualize_supervision_dataset(dataset)
     return image_example

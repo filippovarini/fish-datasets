@@ -15,4 +15,9 @@ class Settings:
     coco_category_id: int = 1
     coco_categories = [{"id": coco_category_id, "name": "fish"}]
     
+    # AI
+    train_val_split_ratio: float = 0.2
+    random_state: int = 42
+    
+    
 

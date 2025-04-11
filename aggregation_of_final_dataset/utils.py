@@ -38,7 +38,7 @@ def compress_annotations_to_single_category(
         assert (
             annotation["category_id"] == annotation_category["id"]
         ), f"Annotation category_id is {annotation['category_id']} not {annotation_category['id']}"
-        
+
         if annotation_category["name"] in category_names_to_keep:
             annotation["category_id"] = Settings.coco_category_id
             new_annotations.append(annotation)
@@ -59,52 +59,33 @@ def compress_annotations_to_single_category(
 
 
 def split_coco_dataset_into_train_validation(
-    dataset_shortname: str,
-    get_split_for_image: Callable[[str, Any], bool],
-    source_dataset_path: Path,
-    source_annotations_filename: str,
-    **kwargs,
+    source_images_path: Path,
+    source_annotations_path: Path,
+    train_dataset_path: Path,
+    val_dataset_path: Path,
+    get_split_for_image: Callable[[str], bool]
 ) -> None:
     """
     Splits a COCO dataset into training and validation sets based on a provided function.
 
     Args:
-        dataset_shortname: Short name for the dataset
-        get_split_for_image: Function that accepts image filename and kwargs, returns True for training set images
-        source_dataset_path: Path to the source dataset (defaults to Settings.base_dir / dataset_shortname)
-        source_annotations_filename: Name of the COCO annotations file (defaults to Settings.coco_file_name)
-        **kwargs: Additional arguments to pass to get_split_for_image
-
-    The function creates two new directories with the structure:
-    - {dataset_shortname}_train/
-      - JPEGImages/
-      - coco_annotations.json
-    - {dataset_shortname}_val/
-      - JPEGImages/
-      - coco_annotations.json
+        source_images_path: Path to the source images
+        source_annotations_path: Path to the source annotations
+        train_dataset_path: Path to the training dataset
+        val_dataset_path: Path to the validation dataset
+        get_split_for_image: Function that accepts image filename and returns True for training set images
     """
-    # Ensure source dataset exists
-    if not source_dataset_path.exists():
-        raise FileNotFoundError(f"Source dataset not found at {source_dataset_path}")
-
-    # Define paths for source dataset files
-    source_images_path = source_dataset_path / settings.images_folder_name
-    source_coco_path = source_dataset_path / source_annotations_filename
-
+    # Assert all paths are valid
     if not source_images_path.exists():
         raise FileNotFoundError(f"Images folder not found at {source_images_path}")
-    if not source_coco_path.exists():
+    if not source_annotations_path.exists():
         raise FileNotFoundError(
-            f"COCO annotations file not found at {source_coco_path}"
+            f"COCO annotations file not found at {source_annotations_path}"
         )
-
-    # Define paths for output datasets
-    train_dataset_path = (
-        settings.base_dir / f"{dataset_shortname}{settings.train_dataset_suffix}"
-    )
-    val_dataset_path = (
-        settings.base_dir / f"{dataset_shortname}{settings.val_dataset_suffix}"
-    )
+    if not train_dataset_path.exists():
+        raise FileNotFoundError(f"Training dataset not found at {train_dataset_path}")
+    if not val_dataset_path.exists():
+        raise FileNotFoundError(f"Validation dataset not found at {val_dataset_path}")
 
     # Create output directories
     train_images_path = train_dataset_path / settings.images_folder_name
@@ -114,7 +95,7 @@ def split_coco_dataset_into_train_validation(
     val_images_path.mkdir(parents=True)
 
     # Load COCO annotations
-    with open(source_coco_path, "r") as f:
+    with open(source_annotations_path, "r") as f:
         coco_data = json.load(f)
 
     # Initialize new COCO datasets
@@ -131,12 +112,12 @@ def split_coco_dataset_into_train_validation(
     val_image_ids = set()
 
     # Split images based on the provided function
-    for image in coco_data.get("images", []):
+    for i, image in enumerate(coco_data.get("images", [])):
         # Get the image filename
         filename = image.get("file_name")
 
         # Use the provided function to determine if this is a training image
-        is_train = get_split_for_image(filename, **kwargs)
+        is_train = get_split_for_image(filename)
 
         # Determine target paths
         if is_train:
@@ -162,7 +143,10 @@ def split_coco_dataset_into_train_validation(
 
         # only copy if the target image does not exist
         if not target_image_path.exists():
+            print(f"Copying image {i} of {len(coco_data.get('images', []))}", end="\r")
             shutil.copy2(source_image_path, target_image_path)
+
+    print()
 
     # Split annotations based on image IDs
     for annotation in coco_data.get("annotations", []):
@@ -186,7 +170,7 @@ def split_coco_dataset_into_train_validation(
         json.dump(val_coco, f, indent=2)
 
     # Print summary
-    print(f"Split dataset {dataset_shortname} into:")
+    print(f"Split dataset into:")
     print(
         f"  - Training: {len(train_coco['images'])} images, {len(train_coco['annotations'])} annotations"
     )
