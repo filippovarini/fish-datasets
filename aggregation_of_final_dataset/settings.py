@@ -14,6 +14,7 @@ class Settings:
     # We only use one category for the fish
     coco_category_id: int = 1
     coco_categories = [{"id": coco_category_id, "name": "fish"}]
+    coco_file_name: str = "annotations_coco.json"
     
     # AI
     train_val_split_ratio: float = 0.2
