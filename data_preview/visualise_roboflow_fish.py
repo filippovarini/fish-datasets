@@ -17,8 +17,12 @@ IMAGES_DIR = DATA_DIR / "combined"
 ANNOTATIONS_PATH = IMAGES_DIR / "annotations.json"
 
 
-def join_all_images_and_annotations_into_single_dataset(data_dir):
-    # Define paths to the train, validation, and test directories
+def join_all_images_and_annotations_into_single_coco_dataset(
+    data_dir: Path, coco_images_dir: Path, coco_annotations_path: Path
+):
+    """
+    Merges all train/val/test splits into a single COCO dataset.
+    """
     splits = ["train", "valid", "test"]
     split_dirs = [data_dir / split for split in splits]
 
@@ -32,7 +36,7 @@ def join_all_images_and_annotations_into_single_dataset(data_dir):
             raise FileNotFoundError(f"Annotations file not found: {annotation_file}")
 
     # Create output directory
-    output_dir = data_dir / "combined"
+    output_dir = coco_images_dir
     output_dir.mkdir(exist_ok=True)
 
     # Load and combine annotations
@@ -74,15 +78,14 @@ def join_all_images_and_annotations_into_single_dataset(data_dir):
             )
 
     # Save combined annotations
-    output_annotation_file = output_dir / "annotations.json"
-    with open(output_annotation_file, "w") as f:
+    with open(coco_annotations_path, "w") as f:
         json.dump(combined_annotations, f)
 
     print(f"Combined dataset saved to {output_dir}")
     print(f"Total images: {len(combined_annotations['images'])}")
     print(f"Total annotations: {len(combined_annotations['annotations'])}")
 
-    return output_dir, output_annotation_file
+    return coco_images_dir, coco_annotations_path
 
 
 def extract_example_image(images_path, annotations_path, dataset_shortname):
@@ -92,7 +95,7 @@ def extract_example_image(images_path, annotations_path, dataset_shortname):
     )
 
     image_example = visualize_supervision_dataset(dataset)
-    
+
     if image_example is not None:
         output_path = Path(f"{dataset_shortname}_sample_image.png")
         plt.imsave(str(output_path), image_example)
@@ -103,13 +106,13 @@ def extract_example_image(images_path, annotations_path, dataset_shortname):
 
 def download_data(data_dir):
     data_dir.mkdir(exist_ok=True, parents=True)
-    
+
     roboflow_api_key = os.getenv("ROBOFLOW_KEY_ROBOFLOW_FISH")
     print(f"ROBOFLOW_KEY: {roboflow_api_key}")
     data_url = f"https://public.roboflow.com/ds/KJiCisn7wU?key={roboflow_api_key}"
-    
+
     data_path = data_dir / "roboflow_fish.zip"
-    
+
     if data_dir.exists() and len(list(data_dir.glob("*"))) > 0:
         print("Data already downloaded and extracted")
     else:
@@ -121,11 +124,15 @@ def download_data(data_dir):
 
 def main():
     download_data(DATA_DIR)
-    
+
     # Create combined dataset
-    images_dir, annotations_file = join_all_images_and_annotations_into_single_dataset(DATA_DIR)
-    
-    extract_example_image(images_dir, annotations_file, DATASET_SHORTNAME)
+    coco_images_dir = DATA_DIR / "combined"
+    coco_annotations_path = coco_images_dir / "annotations.json"
+    coco_images_dir, coco_annotations_path = join_all_images_and_annotations_into_single_coco_dataset(
+        DATA_DIR, coco_images_dir, coco_annotations_path
+    )
+
+    extract_example_image(coco_images_dir, coco_annotations_path, DATASET_SHORTNAME)
 
 
 if __name__ == "__main__":
