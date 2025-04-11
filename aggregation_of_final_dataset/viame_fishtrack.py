@@ -1,8 +1,5 @@
 from pathlib import Path
 
-from aggregation_of_final_dataset.utils import (
-    setup_raw_processed_directories_for_dataset,
-)
 from data_preview.visualize_viame_fishtrack import (
     download_data_and_build_coco_dataset,
     DATASET_SHORTNAME,
@@ -10,6 +7,15 @@ from data_preview.visualize_viame_fishtrack import (
 from settings import Settings
 
 settings = Settings()
+
+
+def setup_raw_processed_directories_for_dataset(dataset_name: str) -> tuple[Path, Path]:
+    """
+    Sets up the raw and processed directories for a dataset.
+    """
+    raw_data_path = settings.raw_dir / dataset_name
+    processed_data_path = settings.final_dir / dataset_name
+    return raw_data_path, processed_data_path
 
 
 def main():
