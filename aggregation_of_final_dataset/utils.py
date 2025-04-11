@@ -1,7 +1,7 @@
 import json
 import shutil
 from pathlib import Path
-from typing import Callable, Any
+from typing import Callable, List, Optional
 
 from aggregation_of_final_dataset.settings import Settings
 
@@ -10,11 +10,13 @@ settings = Settings()
 
 
 def compress_annotations_to_single_category(
-    annotations_path: Path, category_names_to_keep: list[str], output_path: Path
+    annotations_path: Path, categories_filter: Optional[List[str]], output_path: Path
 ):
     """
-    Discards all annotations except for the ones in the category_names_to_keep list.
+    Discards all annotations except for the ones in the categories_filter list.
     For the ones that are kept, it renames all categories to a single category, fish.
+    
+    NOTE: If categories_filter is None, all annotations are kept.
     """
     # Check if new annotation file already exists
     if output_path.exists():
@@ -27,11 +29,16 @@ def compress_annotations_to_single_category(
 
     # Check existing categories
     all_category_names = {c["name"] for c in coco_data["categories"]}
-    print(
-        f"Found categories {all_category_names} but only keeping {category_names_to_keep}"
-    )
+    if categories_filter is None:
+        print(
+            f"Found categories {all_category_names} but keeping all"
+        )
+    else:
+        print(
+            f"Found categories {all_category_names} but only keeping {categories_filter}"
+        )
 
-    # Filter annotations to only include the ones in the category_names_to_keep list
+    # Filter annotations to only include the ones in the categories_filter list
     new_annotations = []
     for annotation in coco_data["annotations"]:
         annotation_category = coco_data["categories"][annotation["category_id"]]
@@ -39,7 +46,7 @@ def compress_annotations_to_single_category(
             annotation["category_id"] == annotation_category["id"]
         ), f"Annotation category_id is {annotation['category_id']} not {annotation_category['id']}"
 
-        if annotation_category["name"] in category_names_to_keep:
+        if not categories_filter or annotation_category["name"] in categories_filter:
             annotation["category_id"] = Settings.coco_category_id
             new_annotations.append(annotation)
 
