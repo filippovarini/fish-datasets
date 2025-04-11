@@ -2,59 +2,21 @@
 import matplotlib.pyplot as plt
 import supervision as sv
 from pathlib import Path
-import random
 import json
-import zipfile
-import requests
-from dotenv import load_dotenv
-import os
 import shutil
+import os
+from dotenv import load_dotenv
+
+from data_preview.utils import visualize_supervision_dataset, download_file, extract_zip
 
 load_dotenv()
 
-# %%
-dataset_shortname = "roboflow_fish"
-data_dir = Path("/mnt/data/tmp/") / dataset_shortname
-data_dir.mkdir(exist_ok=True, parents=True)
-
-# %%
-roboflow_api_key = os.getenv("ROBOFLOW_KEY_ROBOFLOW_FISH")
-print(f"ROBOFLOW_KEY: {roboflow_api_key}")
-data_url = f"https://public.roboflow.com/ds/KJiCisn7wU?key={roboflow_api_key}"
-
-data_path = data_dir / "roboflow_fish.zip"
+DATASET_SHORTNAME = "roboflow_fish"
+DATA_DIR = Path("/mnt/data/tmp/") / DATASET_SHORTNAME
+IMAGES_DIR = DATA_DIR / "combined"
+ANNOTATIONS_PATH = IMAGES_DIR / "annotations.json"
 
 
-def download_file(url, save_path):
-    print(f"Downloading {url} to {save_path}...")
-    response = requests.get(url, stream=True)
-    response.raise_for_status()  # Raise an exception for HTTP errors
-
-    with open(save_path, "wb") as f:
-        for chunk in response.iter_content(chunk_size=8192):
-            f.write(chunk)
-    print(f"Download complete: {save_path}")
-
-
-def extract_zip(zip_path, extract_to):
-    print(f"Extracting {zip_path} to {extract_to}")
-    with zipfile.ZipFile(zip_path, "r") as zip_ref:
-        zip_ref.extractall(extract_to)
-    print(f"Extraction complete: {zip_path}")
-
-
-if data_dir.exists() and len(list(data_dir.glob("*"))) > 0:
-    print("Data already downloaded and extracted")
-else:
-    print("Downloading data...")
-    download_file(data_url, data_path)
-    print("Extracting data...")
-    extract_zip(data_path, data_dir)
-    print("Removing Zipped files...")
-    data_path.unlink()
-
-
-# %%
 def join_all_images_and_annotations_into_single_dataset(data_dir):
     # Define paths to the train, validation, and test directories
     splits = ["train", "valid", "test"]
@@ -123,78 +85,48 @@ def join_all_images_and_annotations_into_single_dataset(data_dir):
     return output_dir, output_annotation_file
 
 
-# Create combined dataset
-images_dir, annotations_file = join_all_images_and_annotations_into_single_dataset(
-    data_dir
-)
+def extract_example_image(images_path, annotations_path, dataset_shortname):
+    dataset = sv.DetectionDataset.from_coco(
+        images_directory_path=str(images_path),
+        annotations_path=str(annotations_path),
+    )
 
-# %%
-# Load the dataset using supervision
-dataset = sv.DetectionDataset.from_coco(
-    images_directory_path=str(images_dir),
-    annotations_path=str(annotations_file),
-)
-
-print(f"Dataset length: {len(dataset)}")
-print(f"Dataset classes: {dataset.classes}")
-
-
-# %%
-def compute_random_grid_of_annotated_images():
-    box_annotator = sv.BoxAnnotator()
-    label_annotator = sv.LabelAnnotator()
-
-    image_example = None
-    annotated_images = []
-
-    # Get a sample of images to visualize
-    num_samples = min(16, len(dataset))
-    sample_indices = random.sample(range(len(dataset)), num_samples)
-
-    for i in sample_indices:
-        _, image, annotations = dataset[i]
-
-        # Skip if no annotations
-        if len(annotations) == 0:
-            continue
-
-        labels = [dataset.classes[class_id] for class_id in annotations.class_id]
-
-        annotated_image = image.copy()
-        annotated_image = box_annotator.annotate(annotated_image, annotations)
-        annotated_image = label_annotator.annotate(annotated_image, annotations, labels)
-        annotated_images.append(annotated_image)
-
-        if image_example is None and len(annotations) > 0:
-            image_example = annotated_image
-
-    # Fill remaining slots if needed
-    while len(annotated_images) < 16:
-        i = random.randint(0, len(dataset) - 1)
-        _, image, annotations = dataset[i]
-
-        labels = [dataset.classes[class_id] for class_id in annotations.class_id]
-
-        annotated_image = image.copy()
-        annotated_image = box_annotator.annotate(annotated_image, annotations)
-        annotated_image = label_annotator.annotate(annotated_image, annotations, labels)
-        annotated_images.append(annotated_image)
-
-        if image_example is None and len(annotations) > 0:
-            image_example = annotated_image
-
-    sv.plot_images_grid(annotated_images, grid_size=(4, 4), titles=None, size=(20, 12))
-
-    return image_example
+    image_example = visualize_supervision_dataset(dataset)
+    
+    if image_example is not None:
+        output_path = Path(f"{dataset_shortname}_sample_image.png")
+        plt.imsave(str(output_path), image_example)
+        print(f"Sample image saved to {output_path}")
+    else:
+        print("No annotated images found to save as sample")
 
 
-image_example = compute_random_grid_of_annotated_images()
+def download_data(data_dir):
+    data_dir.mkdir(exist_ok=True, parents=True)
+    
+    roboflow_api_key = os.getenv("ROBOFLOW_KEY_ROBOFLOW_FISH")
+    print(f"ROBOFLOW_KEY: {roboflow_api_key}")
+    data_url = f"https://public.roboflow.com/ds/KJiCisn7wU?key={roboflow_api_key}"
+    
+    data_path = data_dir / "roboflow_fish.zip"
+    
+    if data_dir.exists() and len(list(data_dir.glob("*"))) > 0:
+        print("Data already downloaded and extracted")
+    else:
+        print("Downloading data...")
+        download_file(data_url, data_path)
+        print("Extracting data...")
+        extract_zip(data_path, data_dir)
 
-# %%
-# Save a sample image
-if image_example is not None:
-    output_path = Path(f"{dataset_shortname}_sample_image.png")
-    plt.imsave(str(output_path), image_example)
-    print(f"Sample image saved to {output_path}")
-else:
-    print("No annotated images found to save as sample")
+
+def main():
+    download_data(DATA_DIR)
+    
+    # Create combined dataset
+    images_dir, annotations_file = join_all_images_and_annotations_into_single_dataset(DATA_DIR)
+    
+    extract_example_image(images_dir, annotations_file, DATASET_SHORTNAME)
+
+
+if __name__ == "__main__":
+    main()
