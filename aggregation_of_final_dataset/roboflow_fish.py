@@ -31,7 +31,7 @@ def get_list_of_cameras_to_include_in_train_set(train_image_folder: Path) -> lis
 def main():
     # 1. RAW
     # Download NOAA Data in Raw Directory
-    raw_download_path = settings.raw_dir / "sandbox" / DATASET_SHORTNAME
+    raw_download_path = settings.raw_dir / DATASET_SHORTNAME
     raw_download_path.mkdir(parents=True, exist_ok=True)
     download_data(raw_download_path)
 

@@ -73,5 +73,5 @@ def main():
     extract_example_image(IMAGES_PATH, ANNOTATIONS_PATH, DATASET_SHORTNAME)
     
     
-if __name__ == "__main__":
-    main()
+# if __name__ == "__main__":
+#     main()

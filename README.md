@@ -383,7 +383,7 @@ Bruslund Haurum J, Karpova A, Pedersen M, Hein Bengtson S, Moeslund TB. Re-ident
 * Image information: 2224 images
 * Annotation information: AAU VAP bounding boxes
 * Typical animal size in pixels: N/A
-* Code to render sample annotated image: <a href="./data_preview/visualize_Zebrafish_dataset.ipynb">visualize_Zebrafish_dataset.ipynb</a>
+* Code to render sample annotated image: <a href="./data_preview/visualize_zebrafish.py">visualize_zebrafish.py</a>
   
 <img src="./data_preview/Zebrafish_sample_image.png" width=150>
   

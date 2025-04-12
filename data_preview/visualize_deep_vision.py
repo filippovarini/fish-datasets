@@ -145,16 +145,16 @@ def main():
     images_path.mkdir(parents=True, exist_ok=True)
     create_coco_dataset(download_path, images_path, annotations_path)
     
-    # # Load and visualize dataset
-    # dataset = sv.DetectionDataset.from_coco(
-    #     images_directory_path=str(images_path),
-    #     annotations_path=str(annotations_path),
-    # )
+    # Load and visualize dataset
+    dataset = sv.DetectionDataset.from_coco(
+        images_directory_path=str(images_path),
+        annotations_path=str(annotations_path),
+    )
     
-    # # Extract and save sample image
-    # image_example = visualize_supervision_dataset(dataset)
-    # plt.imsave(f"{DATASET_SHORTNAME}_sample_image.png", image_example)
+    # Extract and save sample image
+    image_example = visualize_supervision_dataset(dataset)
+    plt.imsave(f"{DATASET_SHORTNAME}_sample_image.png", image_example)
 
 
-if __name__ == "__main__":
-    main()
+# if __name__ == "__main__":
+#     main()
