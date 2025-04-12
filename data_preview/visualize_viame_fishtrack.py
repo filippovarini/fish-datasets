@@ -364,6 +364,6 @@ def main():
         plt.imsave(output_dir / f"{DATASET_SHORTNAME}_sample_image.png", image_example)
 
 
-if __name__ == "__main__":
-    main()
-# %%
+# if __name__ == "__main__":
+#     main()
+# # %%

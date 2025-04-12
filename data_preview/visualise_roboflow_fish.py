@@ -135,5 +135,5 @@ def main():
     extract_example_image(coco_images_dir, coco_annotations_path, DATASET_SHORTNAME)
 
 
-if __name__ == "__main__":
-    main()
+# if __name__ == "__main__":
+#     main()

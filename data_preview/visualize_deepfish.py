@@ -181,5 +181,5 @@ def main():
     plt.imsave(f"{DATASET_SHORTNAME}_sample_image.png", random_image)
 
 
-if __name__ == "__main__":
-    main()
+# if __name__ == "__main__":
+#     main()
