@@ -15,7 +15,7 @@ def compress_annotations_to_single_category(
     """
     Discards all annotations except for the ones in the categories_filter list.
     For the ones that are kept, it renames all categories to a single category, fish.
-    
+
     NOTE: If categories_filter is None, all annotations are kept.
     """
     # Check if new annotation file already exists
@@ -30,9 +30,7 @@ def compress_annotations_to_single_category(
     # Check existing categories
     all_category_names = {c["name"] for c in coco_data["categories"]}
     if categories_filter is None:
-        print(
-            f"Found categories {all_category_names} but keeping all"
-        )
+        print(f"Found categories {all_category_names} but keeping all")
     else:
         print(
             f"Found categories {all_category_names} but only keeping {categories_filter}"
@@ -42,9 +40,9 @@ def compress_annotations_to_single_category(
     new_annotations = []
     for annotation in coco_data["annotations"]:
         # Annotation ids in COCO are 1-indexed but list indices are 0-indexed
-        category_index = annotation["category_id"] - 1 
+        category_index = annotation["category_id"] - 1
         annotation_category = coco_data["categories"][category_index]
-        
+
         assert (
             annotation["category_id"] == annotation_category["id"]
         ), f"Annotation category_id is {annotation['category_id']} not {annotation_category['id']}"
@@ -68,11 +66,17 @@ def compress_annotations_to_single_category(
         json.dump(coco_data, f, indent=2)
 
 
-def convert_coco_annotations_from_0_indexed_to_1_indexed(input_coco_annotations_path: Path, output_coco_annotations_path: Path) -> dict:
+def convert_coco_annotations_from_0_indexed_to_1_indexed(
+    input_coco_annotations_path: Path, output_coco_annotations_path: Path
+) -> dict:
     """
     The standard COCO categories should be 1-indexed but some datasets are 0-indexed.
     This function converts the category ids to 1-indexed.
     """
+    if output_coco_annotations_path.exists():
+        print(f"New annotation file already exists at {output_coco_annotations_path}")
+        return output_coco_annotations_path
+
     with open(input_coco_annotations_path, "r") as f:
         coco_data = json.load(f)
 
@@ -92,7 +96,7 @@ def split_coco_dataset_into_train_validation(
     source_annotations_path: Path,
     train_dataset_path: Path,
     val_dataset_path: Path,
-    get_split_for_image: Callable[[str], bool]
+    get_split_for_image: Callable[[str], bool],
 ) -> None:
     """
     Splits a COCO dataset into training and validation sets based on a provided function.
