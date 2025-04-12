@@ -168,7 +168,7 @@ Vaneeda Allken, Shale Rosen (2020) Deep Vision fish dataset https://doi.org/10.2
 * Image information: 1875 RGB images
 * Annotation information: 4834 bounding boxes, segmentation masks
 * Typical animal size in pixels: N/A
-* Code to render sample annotated image: <a href="./data_preview/visualise_deep_vision.ipynb">visualise_deep_vision.ipynb</a>
+* Code to render sample annotated image: <a href="./data_preview/visualise_deep_vision.py">visualise_deep_vision.py</a>
   
 <img src="./data_preview/deep_vision_sample_image.png" width=700>
   
