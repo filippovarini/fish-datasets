@@ -301,9 +301,18 @@ def extract_frames_from_videos(download_dir: Path, frames_dir: Path, coco_data: 
     return frames_dir
 
 
-def build_full_dataset(data_dir: Path, frames_dir: Path, merged_coco_path: Path):
-    """Build a single COCO dataset with all frames and visualize it"""
-    # Paths
+def main():
+    data_dir = Path("/mnt/data/dev/fish-datasets/data/raw") / DATASET_SHORTNAME
+    data_dir.mkdir(parents=True, exist_ok=True)
+    
+    download_data(data_dir)
+    convert_annotations(data_dir, data_dir)
+
+    merged_coco_path = data_dir / "fishclef_2015_release/merged_annotations.json"
+    frames_dir = data_dir / "fishclef_2015_release/extracted_frames"
+    
+    
+    # Merge all annotations
     training_videos_path = data_dir / "fishclef_2015_release/training_set/videos"
     training_annotations_coco_path = data_dir / "fishclef_2015_release/training_set/gt_coco"
     
@@ -323,38 +332,13 @@ def build_full_dataset(data_dir: Path, frames_dir: Path, merged_coco_path: Path)
     print(f"Merging {len(all_annotations)} annotation files")
     merged_coco_path = merge_coco_datasets_into_single_dataset(all_annotations, merged_coco_path)
     
-    # Load merged annotations
-    with open(merged_coco_path, "r") as f:
-        merged_coco_data = json.load(f)
+    extract_frames_from_videos(data_dir, frames_dir, merged_coco_path)
     
-    # Extract frames from training videos
-    print("Extracting frames from training videos")
-    extract_frames_from_videos(training_videos_path, frames_dir, merged_coco_data)
-    
-    # Extract frames from test videos
-    print("Extracting frames from test videos")
-    extract_frames_from_videos(test_videos_path, frames_dir, merged_coco_data)
-    
-    # Visualize the dataset using supervision
-    print("Visualizing dataset")
+    build_and_visualize_supervision_dataset_from_coco_dataset(
+        images_dir=frames_dir,
+        annotations_path=merged_coco_path
+    )
 
 
-def main():
-    data_dir = Path("/mnt/data/dev/fish-datasets/data/raw") / DATASET_SHORTNAME
-    data_dir.mkdir(parents=True, exist_ok=True)
-    
-    download_data(data_dir)
-    convert_annotations(data_dir, data_dir)
-
-    merged_coco_path = data_dir / "fishclef_2015_release/merged_annotations.json"
-    frames_dir = data_dir / "fishclef_2015_release/extracted_frames"
-    build_full_dataset(data_dir, frames_dir, merged_coco_path)
-    
-    # build_and_visualize_supervision_dataset_from_coco_dataset(
-    #     images_dir=frames_dir,
-    #     annotations_path=merged_coco_path
-    # )
-
-
-if __name__ == "__main__":
-    main()
+# if __name__ == "__main__":
+#     main()
