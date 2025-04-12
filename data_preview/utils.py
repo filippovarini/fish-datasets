@@ -64,7 +64,7 @@ def download_and_extract(
         print("Downloading data...")
         download_file(data_url, download_path)
         print("Extracting data...")
-    extract_downloaded_file(download_path, data_dir, compression_type)
+        extract_downloaded_file(download_path, data_dir, compression_type)
     return data_dir
 
 
