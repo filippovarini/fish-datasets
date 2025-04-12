@@ -41,7 +41,6 @@ def get_list_of_cameras_to_include_in_train_set(image_folder: Path) -> list[str]
 
 def main():
     # 1. RAW
-    # Kagglehub downloads by default to  ~/.cache/kagglehub/
     # Download NOAA Data in Raw Directory
     raw_download_path = settings.raw_dir / DATASET_SHORTNAME
     raw_download_path.mkdir(parents=True, exist_ok=True)
