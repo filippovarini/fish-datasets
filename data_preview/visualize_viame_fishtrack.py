@@ -9,7 +9,7 @@ import supervision as sv
 import pandas as pd
 import cv2
 
-from data_preview.utils import download_and_extract_zip
+from data_preview.utils import download_and_extract
 
 
 DATASET_SHORTNAME = "viame_fishtrack"
@@ -301,7 +301,7 @@ def download_data_and_build_coco_dataset(
     Downloads both the VIAME Train and Test datasets and builds a single
     COCO dataset with all the data.
     """
-    downloaded_data_path = download_and_extract_zip(
+    downloaded_data_path = download_and_extract(
         raw_data_download_path, data_url, DATASET_SHORTNAME
     )
 

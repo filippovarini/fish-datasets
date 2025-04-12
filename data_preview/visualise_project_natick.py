@@ -5,7 +5,7 @@ from pathlib import Path
 import os
 import xml.etree.ElementTree as ET
 
-from data_preview.utils import visualize_supervision_dataset, download_file, extract_zip
+from data_preview.utils import visualize_supervision_dataset, download_file, extract_downloaded_file
 
 
 DATASET_SHORTNAME = "project_natick"
@@ -42,7 +42,7 @@ def download_data(data_dir: Path):
         print("Downloading data...")
         download_file(DATA_URL, data_path)
         print("Extracting data...")
-        extract_zip(data_path, data_dir)
+        extract_downloaded_file(data_path, data_dir)
     else:
         print("Data already downloaded and extracted")
 
