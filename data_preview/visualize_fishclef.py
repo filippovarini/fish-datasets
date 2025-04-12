@@ -40,7 +40,7 @@ def convert_xml_to_coco(xml_file, output_dir=None):
     root = tree.getroot()
 
     # Extract the video id/name from the <video> element.
-    video_id = root.get("id")
+    video_id = Path(xml_file).stem
 
     images = []
     annotations = []
@@ -107,26 +107,27 @@ def convert_xml_to_coco(xml_file, output_dir=None):
 
 def convert_annotations(download_dir: Path, output_dir: Path):
     """Convert XML annotations to COCO format for both training and test sets"""
-    training_annotations_path = download_dir / "fishclef_2015_release/training_set/gt"
-    training_annotations_coco_path = output_dir / "fishclef_2015_release/training_set/gt_coco"
-    training_annotations_coco_path.mkdir(exist_ok=True, parents=True)
-    
-    test_annotations_path = download_dir / "fishclef_2015_release/test_set/gt" 
-    test_annotations_coco_path = output_dir / "fishclef_2015_release/test_set/gt_coco"
-    test_annotations_coco_path.mkdir(exist_ok=True, parents=True)
-    
+    training_annotations_path = download_dir / "fishclef_2015_release" / "training_set" / "gt"
+    training_annotations_coco_path = output_dir / "fishclef_2015_release" / "training_set" / "gt_coco"
+    test_annotations_path = download_dir / "fishclef_2015_release" / "test_set" / "gt"
+    test_annotations_coco_path = output_dir / "fishclef_2015_release" / "test_set" / "gt_coco"
+
     if training_annotations_coco_path.exists() and test_annotations_coco_path.exists():
         print("Annotations already converted, skipping")
         return
     
+    training_annotations_coco_path.mkdir(exist_ok=True, parents=True)
+    test_annotations_coco_path.mkdir(exist_ok=True, parents=True)
+    
+    
     # Convert training annotations
-    xml_files = glob.glob(os.path.join(training_annotations_path, "*.xml"))
+    xml_files = training_annotations_path.rglob("*.xml")
     for xml_file in xml_files:
         output_json = convert_xml_to_coco(xml_file, training_annotations_coco_path)
         print(f"Converted '{xml_file}' to '{output_json}'.")
 
     # Convert test annotations
-    xml_files = glob.glob(os.path.join(test_annotations_path, "*.xml"))
+    xml_files = test_annotations_path.rglob("*.xml")
     for xml_file in xml_files:
         output_json = convert_xml_to_coco(xml_file, test_annotations_coco_path)
         print(f"Converted '{xml_file}' to '{output_json}'.")
@@ -270,9 +271,9 @@ def extract_frames_from_videos(download_dir: Path, frames_dir: Path, coco_data: 
         frame_filename = image_info["file_name"]
         frame_id = int(Path(frame_filename).stem.split("_frame_")[1])
         frame_name = Path(frame_filename).stem.split("_frame_")[0]
-        assert (
-            frame_name in video_name_to_video_path
-        ), f"Frame {frame_name} not found in {video_name_to_video_path}"
+        if frame_name not in video_name_to_video_path:
+            print(f"⚠️ Frame {frame_name} not found in {video_name_to_video_path}")
+            continue
 
         video_path = video_name_to_video_path[frame_name]
         print(f"Extracting frame {frame_id} from {video_path}")
@@ -280,7 +281,7 @@ def extract_frames_from_videos(download_dir: Path, frames_dir: Path, coco_data: 
         # Open the video
         cap = cv2.VideoCapture(video_path)
         if not cap.isOpened():
-            print(f"Error opening video file: {video_path}")
+            print(f"⚠️ Error opening video file: {video_path}")
             continue
         
         # Extract the frame
@@ -291,7 +292,7 @@ def extract_frames_from_videos(download_dir: Path, frames_dir: Path, coco_data: 
             cv2.imwrite(str(output_path), frame)
             extracted_frames.add(str(output_path))
         except Exception as e:
-            print(f"Error extracting frame {frame_id} from {video_path}: {e}")
+            print(f"⚠️ Error extracting frame {frame_id} from {video_path}: {e}")
         
         # Release video capture
         cap.release()
@@ -349,10 +350,10 @@ def main():
     frames_dir = data_dir / "fishclef_2015_release/extracted_frames"
     build_full_dataset(data_dir, frames_dir, merged_coco_path)
     
-    build_and_visualize_supervision_dataset_from_coco_dataset(
-        images_dir=frames_dir,
-        annotations_path=merged_coco_path
-    )
+    # build_and_visualize_supervision_dataset_from_coco_dataset(
+    #     images_dir=frames_dir,
+    #     annotations_path=merged_coco_path
+    # )
 
 
 if __name__ == "__main__":
