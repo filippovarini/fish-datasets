@@ -41,7 +41,10 @@ def compress_annotations_to_single_category(
     # Filter annotations to only include the ones in the categories_filter list
     new_annotations = []
     for annotation in coco_data["annotations"]:
-        annotation_category = coco_data["categories"][annotation["category_id"]]
+        # Annotation ids in COCO are 1-indexed but list indices are 0-indexed
+        category_index = annotation["category_id"] - 1 
+        annotation_category = coco_data["categories"][category_index]
+        
         assert (
             annotation["category_id"] == annotation_category["id"]
         ), f"Annotation category_id is {annotation['category_id']} not {annotation_category['id']}"
