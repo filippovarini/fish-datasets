@@ -68,6 +68,25 @@ def compress_annotations_to_single_category(
         json.dump(coco_data, f, indent=2)
 
 
+def convert_coco_annotations_from_0_indexed_to_1_indexed(input_coco_annotations_path: Path, output_coco_annotations_path: Path) -> dict:
+    """
+    The standard COCO categories should be 1-indexed but some datasets are 0-indexed.
+    This function converts the category ids to 1-indexed.
+    """
+    with open(input_coco_annotations_path, "r") as f:
+        coco_data = json.load(f)
+
+    for annotation in coco_data["annotations"]:
+        annotation["category_id"] += 1
+    for category in coco_data["categories"]:
+        category["id"] += 1
+
+    with open(output_coco_annotations_path, "w") as f:
+        json.dump(coco_data, f, indent=2)
+
+    return output_coco_annotations_path
+
+
 def split_coco_dataset_into_train_validation(
     source_images_path: Path,
     source_annotations_path: Path,
