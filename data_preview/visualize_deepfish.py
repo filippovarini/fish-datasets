@@ -96,6 +96,10 @@ def create_coco_dataset(download_path: Path):
     segmentation_mask_base = segmentation_base / "masks" / "valid"
     segmentation_image_base = segmentation_base / "images" / "valid"
     coco_dataset_file = download_path / "deepfish_coco.json"
+    
+    if coco_dataset_file.exists():
+        print(f"COCO dataset already exists: {coco_dataset_file}")
+        return segmentation_image_base, coco_dataset_file
 
     # Ensure directories exist
     if not segmentation_mask_base.exists():
@@ -132,7 +136,7 @@ def create_coco_dataset(download_path: Path):
     # Create complete COCO dataset
     coco_data = {
         "info": {},
-        "categories": [{"name": "fish", "id": 1}],
+        "categories": [{"name": "fish", "id": 0}],
         "annotations": annotation_records,
         "images": [],
     }
