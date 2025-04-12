@@ -281,6 +281,7 @@ Joly A., Goeau H., Glotin H., Spampinato C., Bonnet P., Vellinga W.-P., Planquè
 * Image information: 20m000 images
 * Annotation information: 14,000 bounding boxes
 * Typical animal size in pixels: N/A
+* Code to rentdr sample annotated image: <a href="./data_preview/visualize_fishclef.py">visualize_fishclef.py</a>
   
 <img src="http://lila.science/wp-content/uploads/2017/03/fishclef_2015-150.png" width=150>
   
