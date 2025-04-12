@@ -1,3 +1,4 @@
+from typing import List
 import matplotlib.pyplot as plt
 import supervision as sv
 from pathlib import Path
@@ -9,7 +10,7 @@ import json
 import cv2
 import numpy as np
 
-from data_preview.utils import download_and_extract
+from data_preview.utils import download_and_extract, build_and_visualize_supervision_dataset_from_coco_dataset
 
 
 DATASET_SHORTNAME = "fishclef"
@@ -104,15 +105,19 @@ def convert_xml_to_coco(xml_file, output_dir=None):
     return output_json
 
 
-def convert_annotations(data_dir: Path):
+def convert_annotations(download_dir: Path, output_dir: Path):
     """Convert XML annotations to COCO format for both training and test sets"""
-    training_annotations_path = data_dir / "fishclef_2015_release/training_set/gt"
-    training_annotations_coco_path = data_dir / "fishclef_2015_release/training_set/gt_coco"
+    training_annotations_path = download_dir / "fishclef_2015_release/training_set/gt"
+    training_annotations_coco_path = output_dir / "fishclef_2015_release/training_set/gt_coco"
     training_annotations_coco_path.mkdir(exist_ok=True, parents=True)
     
-    test_annotations_path = data_dir / "fishclef_2015_release/test_set/gt" 
-    test_annotations_coco_path = data_dir / "fishclef_2015_release/test_set/gt_coco"
+    test_annotations_path = download_dir / "fishclef_2015_release/test_set/gt" 
+    test_annotations_coco_path = output_dir / "fishclef_2015_release/test_set/gt_coco"
     test_annotations_coco_path.mkdir(exist_ok=True, parents=True)
+    
+    if training_annotations_coco_path.exists() and test_annotations_coco_path.exists():
+        print("Annotations already converted, skipping")
+        return
     
     # Convert training annotations
     xml_files = glob.glob(os.path.join(training_annotations_path, "*.xml"))
@@ -137,137 +142,200 @@ def extract_frame(cap, frame_index):
     return frame
 
 
-def detections_from_coco(coco_data, image_id):
+def merge_coco_datasets_into_single_dataset(annotations_paths: List[Path], output_path: Path):
     """
-    Converts COCO annotations for a given image_id into a supervision.Detections object.
-    Assumes bounding boxes in COCO are in [x, y, w, h] format.
+    Merges a list of COCO datasets into a single COCO dataset.
+    
+    Args:
+        annotations_paths: List of paths to COCO annotation files
+        output_path: Path to save the merged COCO dataset
     """
-    anns = [ann for ann in coco_data["annotations"] if ann["image_id"] == image_id]
-    boxes = []
-    confidences = []
-    class_ids = []
+    # Validate inputs
+    if not annotations_paths:
+        raise ValueError("No annotation paths provided")
     
-    for ann in anns:
-        x, y, w, h = ann["bbox"]
-        # Convert from [x, y, w, h] to [x1, y1, x2, y2]
-        boxes.append([x, y, x + w, y + h])
-        confidences.append(1.0)  # No score provided; assume full confidence.
-        class_ids.append(ann["category_id"])
+    if output_path.exists():
+        print(f"Output file already exists at {output_path}")
+        return output_path
     
-    if boxes:
-        boxes = np.array(boxes)
-        confidences = np.array(confidences)
-        class_ids = np.array(class_ids)
-    else:
-        boxes = np.empty((0, 4))
-        confidences = np.empty((0,))
-        class_ids = np.empty((0,))
+    # Initialize counters and data structures
+    image_id_counter = 1  # 1-indexed
+    annotation_id_counter = 1  # 1-indexed
+    category_id_counter = 1  # 1-indexed
+    category_names_to_id = {}
     
-    return sv.Detections(xyxy=boxes, confidence=confidences, class_id=class_ids)
-
-
-def visualize_annotated_frames_grid(video_path, coco_json_path, output_path=None, num_images=16, grid_shape=(4,4)):
-    """Visualize annotated frames from a video in a grid"""
-    # Load COCO annotations
-    with open(coco_json_path, "r") as f:
-        coco_data = json.load(f)
+    merged_coco = {
+        "images": [],
+        "annotations": [],
+        "categories": [],
+    }
     
-    # Build a set of image_ids that have at least one annotation
-    annotated_frame_ids = {ann["image_id"] for ann in coco_data["annotations"]}
-    
-    # Filter the images list to only those with annotations, sorted by image_id
-    annotated_images = sorted([img for img in coco_data["images"] if img["id"] in annotated_frame_ids],
-                              key=lambda x: x["id"])
-    
-    if len(annotated_images) == 0:
-        print("No annotated frames found.")
-        return
-    
-    # Choose num_images frames at equal intervals from annotated_images
-    if len(annotated_images) < num_images:
-        selected_images = annotated_images
-    else:
-        indices = np.linspace(0, len(annotated_images) - 1, num_images, dtype=int)
-        selected_images = [annotated_images[i] for i in indices]
-    
-    # Open the video file
-    cap = cv2.VideoCapture(video_path)
-    if not cap.isOpened():
-        raise Exception(f"Error opening video file: {video_path}")
-    
-    # Initialize BoxAnnotator from supervision
-    box_annotator = sv.BoxAnnotator()
-    
-    annotated_frames = []
-    selected_ids = []  # to keep track of the selected frame ids
-    
-    for image_info in selected_images:
-        frame_id = image_info["id"]
-        # Extract the frame using frame_id (assuming image_id matches frame index)
-        frame = extract_frame(cap, frame_id)
+    # Process each dataset
+    for path in annotations_paths:
+        print(f"Merging {path}")
+        if not path.exists():
+            print(f"Warning: File {path} does not exist, skipping")
+            continue
+            
+        with open(path, "r") as f:
+            try:
+                coco_data = json.load(f)
+            except json.JSONDecodeError:
+                print(f"Error: File {path} is not valid JSON, skipping")
+                continue
         
-        # Get detections for this frame
-        detections = detections_from_coco(coco_data, image_id=frame_id)
+        old_image_id_to_new_image_id = {}
+        old_category_id_to_new_category_id = {}
         
-        # Annotate the frame
-        annotated = box_annotator.annotate(scene=frame, detections=detections)
+        # Process images
+        for image in coco_data.get("images", []):
+            old_image_id = image["id"]
+            old_image_id_to_new_image_id[old_image_id] = image_id_counter
+            image["id"] = image_id_counter
+            merged_coco["images"].append(image)
+            image_id_counter += 1
         
-        # Convert from BGR (OpenCV) to RGB for matplotlib display
-        annotated = cv2.cvtColor(annotated, cv2.COLOR_BGR2RGB)
-        annotated_frames.append(annotated)
-        selected_ids.append(frame_id)
+        # Process categories
+        unique_categories = []
+        for category in coco_data.get("categories", []):
+            old_category_id = category["id"]
+            category_name = category["name"]
+            
+            if category_name in category_names_to_id:
+                # Category already exists, just map the ID
+                old_category_id_to_new_category_id[old_category_id] = category_names_to_id[category_name]
+            else:
+                # New category
+                category_names_to_id[category_name] = category_id_counter
+                old_category_id_to_new_category_id[old_category_id] = category_id_counter
+                
+                # Update category ID and add to list of unique categories
+                category["id"] = category_id_counter
+                unique_categories.append(category)
+                
+                category_id_counter += 1
+        
+        # Add unique categories to merged dataset
+        merged_coco["categories"].extend(unique_categories)
+        
+        # Process annotations
+        for annotation in coco_data.get("annotations", []):
+            try:
+                old_image_id = annotation["image_id"]
+                old_category_id = annotation["category_id"]
+                
+                # Map to new IDs
+                annotation["image_id"] = old_image_id_to_new_image_id[old_image_id]
+                annotation["category_id"] = old_category_id_to_new_category_id[old_category_id]
+                annotation["id"] = annotation_id_counter
+                
+                merged_coco["annotations"].append(annotation)
+                annotation_id_counter += 1
+            except KeyError as e:
+                print(f"Warning: Invalid annotation (missing {e}), skipping")
     
-    cap.release()
+    # Print summary
+    print(f"Merged dataset contains:")
+    print(f"  - {len(merged_coco['images'])} images")
+    print(f"  - {len(merged_coco['annotations'])} annotations")
+    print(f"  - {len(merged_coco['categories'])} categories")
     
-    # Plot the selected frames in a grid
-    fig, axes = plt.subplots(grid_shape[0], grid_shape[1], figsize=(12, 12))
-    axes = axes.flatten()
-    
-    for i, img in enumerate(annotated_frames):
-        axes[i].imshow(img)
-        axes[i].axis("off")
-        axes[i].set_title(f"Frame {selected_ids[i]}")
-    
-    # Hide any remaining subplots if necessary
-    for j in range(len(annotated_frames), len(axes)):
-        axes[j].axis("off")
-    
-    plt.tight_layout()
-    
-    # Save the figure
-    if output_path is None:
-        output_path = f"{DATASET_SHORTNAME}_sample_image.png"
-    plt.savefig(output_path)
-    plt.close()
+    # Save merged dataset
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    with open(output_path, "w") as f:
+        json.dump(merged_coco, f, indent=2)
     
     return output_path
 
 
-def extract_example_image(data_dir: Path):
-    """Extract and visualize example images from training and test sets"""
+def extract_frames_from_videos(download_dir: Path, frames_dir: Path, coco_data: dict):
+    """
+    Extract frames from videos and save them to disk
+    
+    Args:
+        download_dir: Directory containing videos
+        frames_dir: Directory to save extracted frames
+        coco_data: COCO dataset containing frame information
+    """
+    frames_dir.mkdir(parents=True, exist_ok=True)
+    
+    video_name_to_video_path = {video_path.stem: video_path for video_path in download_dir.rglob("*.flv")}
+    print(f"Found {len(video_name_to_video_path)} videos")
+    
+    # Track which frames we have already extracted to avoid duplicates
+    extracted_frames = set()
+    
+    # Extract frames from coco annotations
+    for image_info in coco_data["images"]:
+        frame_filename = image_info["file_name"]
+        frame_id = int(Path(frame_filename).stem.split("_frame_")[1])
+        frame_name = Path(frame_filename).stem.split("_frame_")[0]
+        assert (
+            frame_name in video_name_to_video_path
+        ), f"Frame {frame_name} not found in {video_name_to_video_path}"
+
+        video_path = video_name_to_video_path[frame_name]
+        print(f"Extracting frame {frame_id} from {video_path}")
+        
+        # Open the video
+        cap = cv2.VideoCapture(video_path)
+        if not cap.isOpened():
+            print(f"Error opening video file: {video_path}")
+            continue
+        
+        # Extract the frame
+        try:
+            frame = extract_frame(cap, frame_id)
+            # Save the frame
+            output_path = frames_dir / frame_filename
+            cv2.imwrite(str(output_path), frame)
+            extracted_frames.add(str(output_path))
+        except Exception as e:
+            print(f"Error extracting frame {frame_id} from {video_path}: {e}")
+        
+        # Release video capture
+        cap.release()
+    
+    print(f"Extracted {len(extracted_frames)} frames")
+    return frames_dir
+
+
+def build_full_dataset(data_dir: Path, frames_dir: Path, merged_coco_path: Path):
+    """Build a single COCO dataset with all frames and visualize it"""
+    # Paths
     training_videos_path = data_dir / "fishclef_2015_release/training_set/videos"
     training_annotations_coco_path = data_dir / "fishclef_2015_release/training_set/gt_coco"
     
     test_videos_path = data_dir / "fishclef_2015_release/test_set/videos"
     test_annotations_coco_path = data_dir / "fishclef_2015_release/test_set/gt_coco"
     
-    # Visualise a video from training set
-    video_files = glob.glob(os.path.join(training_videos_path, "*.flv"))
-    if video_files:
-        video_file = random.choice(video_files)
-        coco_annotations = training_annotations_coco_path / (os.path.splitext(os.path.basename(video_file))[0] + ".json")
-        if coco_annotations.exists():
-            print(f"Visualizing training video: {video_file}")
-            visualize_annotated_frames_grid(video_file, coco_annotations, f"{DATASET_SHORTNAME}_training_sample_image.png")
+    # Get all annotation files
+    training_annotations = list(training_annotations_coco_path.glob("*.json"))
+    test_annotations = list(test_annotations_coco_path.glob("*.json"))
+    all_annotations = training_annotations + test_annotations
     
-    # Visualise a video from test set
-    video_files = glob.glob(os.path.join(test_videos_path, "*.flv"))
-    if video_files:
-        video_file = random.choice(video_files)
-        coco_annotations = test_annotations_coco_path / (os.path.splitext(os.path.basename(video_file))[0] + ".json")
-        if coco_annotations.exists():
-            print(f"Visualizing test video: {video_file}")
-            visualize_annotated_frames_grid(video_file, coco_annotations, f"{DATASET_SHORTNAME}_test_sample_image.png")
+    if not all_annotations:
+        print("No annotation files found")
+        return
+    
+    # Merge all annotations
+    print(f"Merging {len(all_annotations)} annotation files")
+    merged_coco_path = merge_coco_datasets_into_single_dataset(all_annotations, merged_coco_path)
+    
+    # Load merged annotations
+    with open(merged_coco_path, "r") as f:
+        merged_coco_data = json.load(f)
+    
+    # Extract frames from training videos
+    print("Extracting frames from training videos")
+    extract_frames_from_videos(training_videos_path, frames_dir, merged_coco_data)
+    
+    # Extract frames from test videos
+    print("Extracting frames from test videos")
+    extract_frames_from_videos(test_videos_path, frames_dir, merged_coco_data)
+    
+    # Visualize the dataset using supervision
+    print("Visualizing dataset")
 
 
 def main():
@@ -275,8 +343,16 @@ def main():
     data_dir.mkdir(parents=True, exist_ok=True)
     
     download_data(data_dir)
-    convert_annotations(data_dir)
-    extract_example_image(data_dir)
+    convert_annotations(data_dir, data_dir)
+
+    merged_coco_path = data_dir / "fishclef_2015_release/merged_annotations.json"
+    frames_dir = data_dir / "fishclef_2015_release/extracted_frames"
+    build_full_dataset(data_dir, frames_dir, merged_coco_path)
+    
+    build_and_visualize_supervision_dataset_from_coco_dataset(
+        images_dir=frames_dir,
+        annotations_path=merged_coco_path
+    )
 
 
 if __name__ == "__main__":
