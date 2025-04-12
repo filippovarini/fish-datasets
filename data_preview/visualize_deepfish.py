@@ -80,7 +80,7 @@ def get_boxes_from_mask_image(mask_file):
         annotation = {
             "id": f"{image_id}_{str(idx).zfill(3)}",
             "image_id": image_id,
-            "category_id": 0,
+            "category_id": 1,
             "bbox": coco_bbox,
         }
         annotations.append(annotation)
@@ -135,7 +135,7 @@ def create_coco_dataset(download_path: Path, coco_dataset_file: Path):
     # Create complete COCO dataset
     coco_data = {
         "info": {},
-        "categories": [{"name": "fish", "id": 0}],
+        "categories": [{"name": "fish", "id": 1}],
         "annotations": annotation_records,
         "images": [],
     }
