@@ -3,7 +3,7 @@ from pathlib import Path
 
 from sklearn.model_selection import train_test_split
 
-from data_preview.visualise_noaa_puget import download_data, DATASET_SHORTNAME
+from data_preview.visualize_noaa_puget import download_data, DATASET_SHORTNAME
 from aggregation_of_final_dataset.utils import (
     compress_annotations_to_single_category,
     split_coco_dataset_into_train_validation,

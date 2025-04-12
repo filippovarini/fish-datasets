@@ -4,7 +4,7 @@ import random
 import supervision as sv
 
 from aggregation_of_final_dataset.settings import Settings
-from data_preview.visualise_roboflow_fish import (
+from data_preview.visualize_roboflow_fish import (
     DATASET_SHORTNAME,
     download_data,
     join_all_images_and_annotations_into_single_coco_dataset,
