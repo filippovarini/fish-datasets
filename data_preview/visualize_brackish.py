@@ -1,18 +1,13 @@
 # %%
+from pathlib import Path
+import json
+import shutil
+
 import matplotlib.pyplot as plt
 import supervision as sv
-from pathlib import Path
-import random
-import json
-import zipfile
-import requests
-from dotenv import load_dotenv
-import os
-import shutil
 
 from data_preview.utils import visualize_supervision_dataset, download_file, extract_downloaded_file
 
-load_dotenv()
 # %%
 DATASET_SHORTNAME = "brackish_dataset"
 DATA_DIR = Path("/mnt/data/tmp/") / DATASET_SHORTNAME
@@ -26,6 +21,10 @@ def join_all_images_and_annotations_into_single_coco_dataset(
     """
     Merges all train/val/test splits into a single COCO dataset.
     """
+    if coco_images_dir.exists() and coco_annotations_path.exists():
+        print("Combined dataset already exists")
+        return coco_images_dir, coco_annotations_path
+
     # Define paths to the train, validation, and test directories
     splits = ["train", "valid", "test"]
     split_dirs = [data_dir / split for split in splits]
@@ -113,8 +112,7 @@ def download_data(data_dir):
     """Download and extract dataset from Roboflow."""
     data_dir.mkdir(exist_ok=True, parents=True)
 
-    roboflow_api_key = os.getenv("ROBOFLOW_KEY_BRAKISH")
-    data_url = f"https://public.roboflow.com/ds/vGBLxigwno?key={roboflow_api_key}"
+    data_url = "https://public.roboflow.com/ds/vGBLxigwno?key=bhFPGoB3VB"
     data_path = data_dir / f"{DATASET_SHORTNAME}.zip"
 
     if data_dir.exists() and len(list(data_dir.glob("*"))) > 0:
