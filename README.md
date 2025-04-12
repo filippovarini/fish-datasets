@@ -132,6 +132,7 @@ Saleh A, Laradji IH, Konovalov DA, Bradley M, Vazquez D, Sheaves M. A realistic 
 * Vehicle type: underwater camera deployed over the side of a boat
 * Image information: 311 images with segmentation masks
 * Annotation information: 388 segmentation masks
+  Code to render sample annotated image: <a href="./data_preview/visualise_deepfish.py">visualise_deepfish.py</a>
   
 <img src="./data_preview/deepfish_sample_image.jpg" width=700>  
   
@@ -275,7 +276,7 @@ Several thousand BRUV images with bounding boxes on fish and bait
 * Vehicle type: BRUV
 * Image information: ~20,000
 * Annotation information: bounding boxes
-* Code to rentdr sample annotated image: <a href="./data_preview/visualize_viame.py">visualize_viame.py</a>
+* Code to rentdr sample annotated image: <a href="./data_preview/visualize_viame_fishtrack.py">visualize_viame_fishtrack.py</a>
   
 <img src="./data_preview/viame_fishtrack_sample_image.png" width=150>
   
