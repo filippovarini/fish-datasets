@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Tuple
 import json
 import shutil
 
@@ -27,14 +28,12 @@ def download_data(download_path: Path):
     return download_path
 
 
-def clean_annotations(data_dir: Path) -> pd.DataFrame:
+def clean_annotations_and_get_df(data_dir: Path) -> Tuple[pd.DataFrame, Path]:
     """Clean and process the annotations."""
     data_path = data_dir / "2" / "data"
     annotation_path = data_dir / "2" / "annotations.csv"
 
     # Read the CSV file
-    import pandas as pd
-
     data_df = pd.read_csv(annotation_path, sep=";")
 
     # Check if the length of the dataframe is equal to the number of images in the data directory
@@ -46,7 +45,7 @@ def clean_annotations(data_dir: Path) -> pd.DataFrame:
     else:
         print("Number of images in the data directory and the dataframe are not equal")
         print("Number of images in the data directory:", len(list(data_path.iterdir())))
-        print("Number of images in the dataframe:", len(data_df))
+        print("Number of annotations in the dataframe:", len(data_df))
 
     # Process the combined columns
     combined_col = "Right,Turning,Occlusion,Glitch"
@@ -84,7 +83,7 @@ def clean_annotations(data_dir: Path) -> pd.DataFrame:
         .reset_index()
     )
 
-    return data_df
+    return data_df, data_path
 
 
 def convert_to_serializable(obj):
@@ -98,8 +97,12 @@ def convert_to_serializable(obj):
     return obj
 
 
-def dataframe_to_coco(df, output_json_path, data_path):
+def dataframe_to_coco(df, output_json_path: Path):
     """Convert the DataFrame to COCO format and save to JSON."""
+    if output_json_path.exists():
+        print(f"COCO format JSON already exists at {output_json_path}")
+        return output_json_path
+    
     # Initialize COCO format dictionary
     coco_format = {
         "info": {},
@@ -248,12 +251,11 @@ def main():
         return
 
     # Clean and process annotations
-    data_path = download_path / "2" / "data"
-    data_df = clean_annotations(download_path)
+    data_df, data_path = clean_annotations_and_get_df(download_path)
 
     # Convert to COCO format
     output_json_path = download_path / "coco_format.json"
-    coco_path = dataframe_to_coco(data_df, output_json_path, data_path)
+    coco_path = dataframe_to_coco(data_df, output_json_path)
 
     # Load COCO annotations
     with open(coco_path, "r") as f:
