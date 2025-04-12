@@ -274,7 +274,7 @@ I. Kavasidis, S. Palazzo, R. Di Salvo, D. Giordano, C. Spampinato, A semi-automa
   
 Joly A., Goeau H., Glotin H., Spampinato C., Bonnet P., Vellinga W.-P., Planquè R., Rauber A., Palazzo S., Fisher R., and others}, LifeCLEF 2015: multimedia life species identification challenges, International Conference of the Cross-Language Evaluation Forum for European Languages, pp. 462-483, Springer, 2015.
 
-* Data downloadable via https from Github (<a href="https://github.com/perceivelab/FishCLEF-2015">download link</a>)
+* Data downloadable via https from Zenodo (<a href="https://zenodo.org/records/15202605/files/fishclef_2015_release.zip?download=1">download link</a>). Note, the dataset was [originally hosted on SharePoint](https://github.com/perceivelab/FishCLEF-2015). We uploaded it to Zenodo to make it downloadable programmatically.
 * Metadata raw format: XML
 * Categories/species: marine ray-finned fish 
 * Vehicle type: N/A
