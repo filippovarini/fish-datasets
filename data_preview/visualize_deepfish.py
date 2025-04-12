@@ -80,7 +80,7 @@ def get_boxes_from_mask_image(mask_file):
         annotation = {
             "id": f"{image_id}_{str(idx).zfill(3)}",
             "image_id": image_id,
-            "category_id": 1,
+            "category_id": 0,
             "bbox": coco_bbox,
         }
         annotations.append(annotation)
@@ -88,15 +88,14 @@ def get_boxes_from_mask_image(mask_file):
     return annotations
 
 
-def create_coco_dataset(download_path: Path):
+def create_coco_dataset(download_path: Path, coco_dataset_file: Path):
     """
     Process mask images to create a COCO format dataset
     """
     segmentation_base = download_path / "DeepFish" / "Segmentation"
     segmentation_mask_base = segmentation_base / "masks" / "valid"
     segmentation_image_base = segmentation_base / "images" / "valid"
-    coco_dataset_file = download_path / "deepfish_coco.json"
-    
+
     if coco_dataset_file.exists():
         print(f"COCO dataset already exists: {coco_dataset_file}")
         return segmentation_image_base, coco_dataset_file
@@ -147,7 +146,7 @@ def create_coco_dataset(download_path: Path):
         image_id = os.path.splitext(os.path.basename(image_file_abs))[0]
         im["id"] = image_id
         im["file_name"] = str(
-            image_file_abs.relative_to(segmentation_image_base.parent)
+            image_file_abs.relative_to(segmentation_image_base)
         )
         im["height"] = im_cv.shape[0]
         im["width"] = im_cv.shape[1]
@@ -166,10 +165,14 @@ def create_coco_dataset(download_path: Path):
 def main():
     # Download and extract dataset
     download_path = Path(os.path.expanduser("~/data")) / DATASET_SHORTNAME
+    download_path.mkdir(parents=True, exist_ok=True)
     download_data(download_path)
 
     # Create COCO dataset from mask images
-    images_path, annotations_path = create_coco_dataset(download_path)
+    coco_dataset_file = download_path / "deepfish_coco.json"
+    images_path, annotations_path = create_coco_dataset(
+        download_path, coco_dataset_file
+    )
 
     # Extract and save sample image
     random_image = build_and_visualize_supervision_dataset_from_coco_dataset(

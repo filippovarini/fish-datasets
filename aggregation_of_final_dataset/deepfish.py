@@ -5,7 +5,7 @@ from sklearn.model_selection import train_test_split
 
 from aggregation_of_final_dataset.settings import Settings
 from data_preview.visualize_deepfish import (
-    DATASET_SHORTNAME, 
+    DATASET_SHORTNAME,
     download_data,
     create_coco_dataset,
 )
@@ -20,10 +20,8 @@ settings = Settings()
 
 def get_unique_deployments(image_folder: Path) -> Set:
     deployments = set()
-    print(list(image_folder.glob("*.png")))
-    for image_path in image_folder.glob("*.png"):
+    for image_path in image_folder.glob("*.jpg"):
         deployments.add(image_path.stem.split("_")[0])
-
     return deployments
 
 
@@ -44,14 +42,16 @@ def main():
     raw_download_path = settings.raw_dir / DATASET_SHORTNAME
     raw_download_path.mkdir(parents=True, exist_ok=True)
     download_data(raw_download_path)
-    
+
     # 2. PROCESSING
     # Build COCO Dataset
-    images_path, annotations_path = create_coco_dataset(raw_download_path)
-
-    # Create COCO Dataset
     processing_dir = settings.intermediate_dir / DATASET_SHORTNAME
     processing_dir.mkdir(parents=True, exist_ok=True)
+
+    coco_annotations_path = processing_dir / settings.coco_file_name
+    images_path, annotations_path = create_coco_dataset(
+        raw_download_path, coco_annotations_path
+    )
 
     compressed_annotations_path = processing_dir / "annotations_coco_compressed.json"
     # Keep all categories as all are fish
