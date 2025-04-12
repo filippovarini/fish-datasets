@@ -1,12 +1,19 @@
 import requests
 import zipfile
+import tarfile
 import random
 from pathlib import Path
+from enum import Enum
 
 import supervision as sv
 
 
-def download_file(url, save_path):
+class CompressionType(Enum):
+    ZIP = "zip"
+    TAR = "tar"
+
+
+def download_file(url: str, save_path: Path):
     print(f"Downloading {url} to {save_path}...")
     response = requests.get(url, stream=True)
     response.raise_for_status()  # Raise an exception for HTTP errors
@@ -17,24 +24,47 @@ def download_file(url, save_path):
     print(f"Download complete: {save_path}")
 
 
-def extract_zip(zip_path, extract_to):
-    print(f"Extracting {zip_path} to {extract_to}")
-    with zipfile.ZipFile(zip_path, "r") as zip_ref:
-        zip_ref.extractall(extract_to)
-    print(f"Extraction complete: {zip_path}")
+def extract_downloaded_file(
+    download_path: Path,
+    extract_to: Path,
+    compression_type: CompressionType = CompressionType.ZIP,
+):
+    print(f"Extracting {download_path} to {extract_to}")
+
+    match compression_type:
+        case CompressionType.ZIP:
+            with zipfile.ZipFile(download_path, "r") as zip_ref:
+                zip_ref.extractall(extract_to)
+            print(f"Extraction complete: {download_path}")
+        case CompressionType.TAR:
+            with tarfile.open(download_path, "r") as tar_ref:
+                tar_ref.extractall(extract_to)
+            print(f"Extraction complete: {download_path}")
+        case _:
+            raise ValueError(f"Unsupported compression type: {compression_type}")
+
     print("Removing Zipped files...")
-    zip_path.unlink()
+    download_path.unlink()
 
 
-def download_and_extract_zip(data_dir, data_url, dataset_shortname):
-    data_path = data_dir / f"{dataset_shortname}.zip"
+def download_and_extract(
+    data_dir: Path,
+    data_url: str,
+    dataset_shortname: str,
+    compression_type: CompressionType = CompressionType.ZIP,
+):
+    """
+    Download and extract a dataset from a URL.
+    """
+    download_path = data_dir / f"{dataset_shortname}.{compression_type.value}"
+    
     if data_dir.exists() and len(list(data_dir.glob("*"))) > 0:
         print("Data already downloaded and extracted")
     else:
         print("Downloading data...")
-        download_file(data_url, data_path)
+        download_file(data_url, download_path)
         print("Extracting data...")
-        extract_zip(data_path, data_dir)
+    extract_downloaded_file(download_path, data_dir, compression_type)
     return data_dir
 
 

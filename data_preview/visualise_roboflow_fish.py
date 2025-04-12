@@ -7,7 +7,7 @@ import shutil
 import os
 from dotenv import load_dotenv
 
-from data_preview.utils import visualize_supervision_dataset, download_file, extract_zip
+from data_preview.utils import visualize_supervision_dataset, download_file, extract_downloaded_file
 
 load_dotenv()
 
@@ -119,7 +119,7 @@ def download_data(data_dir):
         print("Downloading data...")
         download_file(data_url, data_path)
         print("Extracting data...")
-        extract_zip(data_path, data_dir)
+        extract_downloaded_file(data_path, data_dir)
 
 
 def main():

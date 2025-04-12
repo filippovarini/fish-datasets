@@ -3,7 +3,7 @@ import supervision as sv
 from pathlib import Path
 import json
 
-from data_preview.utils import visualize_supervision_dataset, download_file, extract_zip
+from data_preview.utils import visualize_supervision_dataset, download_file, extract_downloaded_file
 
 
 DATASET_SHORTNAME = "noaa_puget"
@@ -58,8 +58,8 @@ def download_data(data_dir: Path):
         download_file(data_url, data_path_zip)
         download_file(annotations_url, annotations_path_zip)
         
-        extract_zip(data_path_zip, DATA_DIR)
-        extract_zip(annotations_path_zip, DATA_DIR)
+        extract_downloaded_file(data_path_zip, DATA_DIR, CompressionType.ZIP)
+        extract_downloaded_file(annotations_path_zip, DATA_DIR, CompressionType.ZIP)
     else:
         print("Data already downloaded and extracted")
     

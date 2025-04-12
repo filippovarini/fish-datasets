@@ -16,7 +16,7 @@ from skimage import measure
 from tqdm import tqdm
 from dotenv import load_dotenv
 
-from data_preview.utils import visualize_supervision_dataset, download_and_extract_zip
+from data_preview.utils import visualize_supervision_dataset, download_and_extract, CompressionType
 
 load_dotenv()
 
@@ -27,6 +27,13 @@ SEGMENTATION_MASK_BASE = SEGMENTATION_BASE / "masks" / "valid"
 SEGMENTATION_IMAGE_BASE = SEGMENTATION_BASE / "images" / "valid"
 SOURCE_URL = "http://data.qld.edu.au/public/Q5842/2020-AlzayatSaleh-00e364223a600e83bd9c3f5bcd91045-DeepFish/DeepFish.tar"
 COCO_DATASET_FILE = DATA_DIR / "deepfish_coco.json"
+
+
+def download_data(download_path: Path):
+    """
+    Download and extract the DeepFish dataset
+    """
+    download_and_extract(download_path, SOURCE_URL, DATASET_SHORTNAME, CompressionType.TAR)
 
 
 def get_boxes_from_mask_image(mask_file):
@@ -192,7 +199,7 @@ def extract_example_image(images_path, annotations_path, dataset_shortname):
 
 def main():
     # Download and extract dataset
-    download_and_extract_zip(DATA_DIR, SOURCE_URL, DATASET_SHORTNAME)
+    download_data(DATA_DIR)
     
     # Create COCO dataset from mask images
     images_path, annotations_path = create_coco_dataset()
