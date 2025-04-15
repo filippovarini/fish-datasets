@@ -29,11 +29,14 @@ def _upload_split_to_roboflow(project: Project, dataset_name: str, split: str):
     total_images = len(list(images_dir.glob("*")))
 
     for image_path in tqdm(list(images_dir.glob("*")), total=total_images):
-        project.upload(
-            image_path=str(image_path),
-            annotation_path=str(annotation_path),
-            split=split,
-        )
+        try:
+            project.upload(
+                image_path=str(image_path),
+                annotation_path=str(annotation_path),
+                split=split,
+            )
+        except Exception as e:
+            print(f"⚠️⚠️ Error uploading {image_path}: {e}")
 
 
 def main():
