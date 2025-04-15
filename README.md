@@ -21,6 +21,7 @@ This effort was supported by the following folks:
 * <a href="https://www.linkedin.com/in/kameswari-devi-ayyagari-031820b7/">Devi Ayyagari</a>
 * <a href="https://www.linkedin.com/in/sonny-burniston/">Sonny Burniston</a>
 * <a href="https://www.linkedin.com/in/mona-dhiflaoui/">Mona Dhiflaoui</a>
+* <a href="https://www.linkedin.com/in/jiashu-chen-w/">Joshua Chen</a>
 
 Email <a href="mailto:fppvrn@gmail.com">Filippo</a> if anything seems off, or if you know of datasets we're missing.
 
