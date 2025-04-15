@@ -30,6 +30,10 @@ def extract_downloaded_file(
     compression_type: CompressionType = CompressionType.ZIP,
 ):
     print(f"Extracting {download_path} to {extract_to}")
+    
+    if not download_path.exists():
+        print("Compressed file not found")
+        return
 
     match compression_type:
         case CompressionType.ZIP:
