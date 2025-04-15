@@ -9,4 +9,3 @@ local
 .env
 final_dataset/
 data/
-test.ipynb
