@@ -1,0 +1,2 @@
+[console_scripts]
+fathomnet-generate = fathomnet.scripts.fathomnet_generate:main
