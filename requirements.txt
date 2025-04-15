@@ -7,3 +7,4 @@ fathomnet
 scikit-image==0.25.2
 kagglehub==0.3.11
 tqdm==4.67.0
+scikit-learn==1.5.2
