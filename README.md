@@ -45,6 +45,24 @@ Farrell DM, Ferriss B, Sanderson B, Veggerby K, Robinson L, Trivedi A, Pathak S,
 * Code to render sample annotated image: <a href="./data_preview/visualise_noaa_puget.py">visualise_noaa_puget.py</a>
   
 <img src="./data_preview/noaa_puget_sample_image.png" width=700>
+
+### Tasmanian Orange Roughy Stereo Image Machine Learning Dataset (TORSI)
+
+Annotated stereo imagery of orange roughy from 2019 Tasmanian survey, with expert-labeled bounding boxes for machine learning detection in fisheries science.
+  
+Scoulding, Ben; Maguire, Kylie; Orenstein, Eric; Jackett, Chris; & CSIRO (2025): Tasmanian Orange Roughy Stereo Image Machine Learning Dataset. v1. CSIRO. Data Collection. https://doi.org/10.25919/a90r-4962
+
+* Data downloadable via via https from the CSIRO Portal (<a href="https://data.csiro.au/collection/64913">download link</a>)
+* License: CC BY-NC-SA 4.0
+* Metadata raw format: COCO
+* Categories/species: fish, eel, corals and other benthic organisms.
+* Vehicle type: Net-attached Acoustic and Optical System (AOS)
+* Image information: 1,051 images
+* Annotation information: 14,414 bounding boxes
+* Typical animal size in pixels: N/A
+* Code to render sample annotated image: <a href="./data_preview/visualize_torsi.py">visualize_torsi.py</a>
+  
+<img src="./data_preview/torsi_sample_image.png" width=700>
   
 
 ### CoralScapes
