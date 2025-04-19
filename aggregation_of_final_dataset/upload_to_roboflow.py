@@ -11,8 +11,7 @@ settings = Settings()
 
 load_dotenv()
 
-DATASET_TO_UPLOAD = "project_natick"
-
+DATASET_TO_UPLOAD = "fishclef"
 
 def _get_roboflow_project():
     rf = Roboflow(api_key=os.getenv("ROBOFLOW_KEY"))
@@ -34,6 +33,7 @@ def _upload_split_to_roboflow(project: Project, dataset_name: str, split: str):
                 image_path=str(image_path),
                 annotation_path=str(annotation_path),
                 split=split,
+                tag_names=[dataset_name]
             )
         except Exception as e:
             print(f"⚠️⚠️ Error uploading {image_path}: {e}")

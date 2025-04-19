@@ -42,7 +42,7 @@ Farrell DM, Ferriss B, Sanderson B, Veggerby K, Robinson L, Trivedi A, Pathak S,
 * Image information: 77,739 images
 * Annotation information: 67,990 bounding boxes
 * Typical animal size in pixels: N/A
-* Code to render sample annotated image: <a href="./data_preview/visualise_noaa_puget.py">visualise_noaa_puget.py</a>
+* Code to render sample annotated image: <a href="./data_preview/visualize_noaa_puget.py">visualize_noaa_puget.py</a>
   
 <img src="./data_preview/noaa_puget_sample_image.png" width=700>
 
@@ -77,7 +77,7 @@ Scoulding, Ben; Maguire, Kylie; Orenstein, Eric; Jackett, Chris; & CSIRO (2025):
 * Vehicle type: diver
 * Image information: 2,027 images
 * Annotation information: 174,000 segmentation annotations, of which 20,849 are fish
-* Code to render sample annotated image: <a href="./data_preview/visualise_noaa_puget.py">coralscapes_to_coco.py</a>
+* Code to render sample annotated image: <a href="./data_preview/visualize_noaa_puget.py">coralscapes_to_coco.py</a>
   
 <img src="./data_preview/coralscapes-sample.jpg" width=700>
 
@@ -96,7 +96,7 @@ https://nbn-resolving.org/urn:nbn:de:0168-ssoar-57615-2
 * Image information: 1118 RGB images (~5% of images have FN annotations)
 * Annotation information: 998 bounding boxes
 * Typical animal size in pixels: N/A
-* Code to render sample annotated image: <a href="./data_preview/visualise_project_natick.py">visualise_project_natick.py</a>
+* Code to render sample annotated image: <a href="./data_preview/visualize_project_natick.py">visualize_project_natick.py</a>
   
 <img src="./data_preview/project_natick_sample_image.png" width=700>
   
@@ -115,7 +115,7 @@ Solawetz, J. (2023, February 21). Fish object detection dataset. Roboflow. https
 * Image information: 1350 RGB images (the taxonomy is often inaccurate)
 * Annotation information: 3142 bounding boxes
 * Typical animal size in pixels: N/A
-* Code to render sample annotated image: <a href="./data_preview/visualise_roboflow_fish.py">visualise_roboflow_fish.py</a>
+* Code to render sample annotated image: <a href="./data_preview/visualize_roboflow_fish.py">visualize_roboflow_fish.py</a>
   
 <img src="./data_preview/roboflow_fish_sample_image.png" width=400>
   
@@ -274,13 +274,14 @@ I. Kavasidis, S. Palazzo, R. Di Salvo, D. Giordano, C. Spampinato, A semi-automa
   
 Joly A., Goeau H., Glotin H., Spampinato C., Bonnet P., Vellinga W.-P., Planquè R., Rauber A., Palazzo S., Fisher R., and others}, LifeCLEF 2015: multimedia life species identification challenges, International Conference of the Cross-Language Evaluation Forum for European Languages, pp. 462-483, Springer, 2015.
 
-* Data downloadable via https from Github (<a href="https://github.com/perceivelab/FishCLEF-2015">download link</a>)
+* Data downloadable via https from Zenodo (<a href="https://zenodo.org/records/15202605/files/fishclef_2015_release.zip?download=1">download link</a>). Note, the dataset was [originally hosted on SharePoint](https://github.com/perceivelab/FishCLEF-2015). We uploaded it to Zenodo to make it downloadable programmatically.
 * Metadata raw format: XML
 * Categories/species: marine ray-finned fish 
 * Vehicle type: N/A
 * Image information: 20m000 images
 * Annotation information: 14,000 bounding boxes
 * Typical animal size in pixels: N/A
+* Code to rentdr sample annotated image: <a href="./data_preview/visualize_fishclef.py">visualize_fishclef.py</a>
   
 <img src="http://lila.science/wp-content/uploads/2017/03/fishclef_2015-150.png" width=150>
   
