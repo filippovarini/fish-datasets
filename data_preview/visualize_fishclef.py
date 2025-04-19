@@ -246,6 +246,9 @@ def merge_coco_datasets_into_single_dataset(annotations_paths: List[Path], outpu
                 annotation["image_id"] = old_image_id_to_new_image_id[old_image_id]
                 annotation["category_id"] = old_category_id_to_new_category_id[old_category_id]
                 annotation["id"] = annotation_id_counter
+                annotation["iscrowd"] = 0
+                _, _, w, h = annotation["bbox"]
+                annotation["area"] = w * h
                 
                 merged_coco["annotations"].append(annotation)
                 annotation_id_counter += 1
@@ -277,7 +280,7 @@ def extract_frames_from_videos(download_dir: Path, frames_dir: Path, coco_data: 
     """
     frames_dir.mkdir(parents=True, exist_ok=True)
     
-    if frames_dir.exists():
+    if frames_dir.exists() and len(list(frames_dir.glob("*"))) > 0:
         print(f"Frames directory already exists at {frames_dir}")
         return frames_dir
     

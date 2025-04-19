@@ -64,6 +64,8 @@ def compress_annotations_to_single_category(
     # Store the new annotation file
     with open(output_path, "w") as f:
         json.dump(coco_data, f, indent=2)
+    
+    return output_path
 
 
 def convert_coco_annotations_from_0_indexed_to_1_indexed(
