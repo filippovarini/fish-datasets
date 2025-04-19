@@ -23,7 +23,17 @@ def download_data(data_dir: Path):
     download_and_extract(data_dir, DATA_URL, DATASET_SHORTNAME)
 
 
-def convert_xml_to_coco(xml_file, output_dir=None):
+def get_width_and_heigth_of_video(videos_dir: Path, video_id: str):
+    """Get the width and height of a video"""
+    video_path = videos_dir / f"{video_id}.flv"
+    cap = cv2.VideoCapture(str(video_path))
+    width = cap.get(cv2.CAP_PROP_FRAME_WIDTH)
+    height = cap.get(cv2.CAP_PROP_FRAME_HEIGHT)
+    cap.release()
+    return width, height
+
+
+def convert_xml_to_coco(videos_dir: Path, xml_file, output_dir=None):
     """
     Converts a single XML annotation file to COCO JSON format.
     
@@ -41,6 +51,8 @@ def convert_xml_to_coco(xml_file, output_dir=None):
 
     # Extract the video id/name from the <video> element.
     video_id = Path(xml_file).stem
+    
+    width, height = get_width_and_heigth_of_video(videos_dir, video_id)
 
     images = []
     annotations = []
@@ -54,6 +66,8 @@ def convert_xml_to_coco(xml_file, output_dir=None):
         image_info = {
             "id": int(frame_id),
             "file_name": f"{video_id}_frame_{frame_id}.jpg",
+            "width": width,
+            "height": height,
         }
         images.append(image_info)
 
@@ -109,8 +123,11 @@ def convert_annotations(download_dir: Path, output_dir: Path):
     """Convert XML annotations to COCO format for both training and test sets"""
     training_annotations_path = download_dir / "fishclef_2015_release" / "training_set" / "gt"
     training_annotations_coco_path = output_dir / "fishclef_2015_release" / "training_set" / "gt_coco"
+    training_videos_path = download_dir / "fishclef_2015_release" / "training_set" / "videos"
+
     test_annotations_path = download_dir / "fishclef_2015_release" / "test_set" / "gt"
     test_annotations_coco_path = output_dir / "fishclef_2015_release" / "test_set" / "gt_coco"
+    test_videos_path = download_dir / "fishclef_2015_release" / "test_set" / "videos"
 
     if training_annotations_coco_path.exists() and test_annotations_coco_path.exists():
         print("Annotations already converted, skipping")
@@ -123,13 +140,13 @@ def convert_annotations(download_dir: Path, output_dir: Path):
     # Convert training annotations
     xml_files = training_annotations_path.rglob("*.xml")
     for xml_file in xml_files:
-        output_json = convert_xml_to_coco(xml_file, training_annotations_coco_path)
+        output_json = convert_xml_to_coco(training_videos_path, xml_file, training_annotations_coco_path)
         print(f"Converted '{xml_file}' to '{output_json}'.")
 
     # Convert test annotations
     xml_files = test_annotations_path.rglob("*.xml")
     for xml_file in xml_files:
-        output_json = convert_xml_to_coco(xml_file, test_annotations_coco_path)
+        output_json = convert_xml_to_coco(test_videos_path, xml_file, test_annotations_coco_path)
         print(f"Converted '{xml_file}' to '{output_json}'.")
 
 
@@ -276,7 +293,7 @@ def extract_frames_from_videos(download_dir: Path, frames_dir: Path, coco_data: 
             continue
 
         video_path = video_name_to_video_path[frame_name]
-        print(f"Extracting frame {frame_id} from {video_path}")
+        print(f"Extracting frame {frame_id} from {video_path}", end="\r")
         
         # Open the video
         cap = cv2.VideoCapture(video_path)
@@ -297,6 +314,7 @@ def extract_frames_from_videos(download_dir: Path, frames_dir: Path, coco_data: 
         # Release video capture
         cap.release()
     
+    print("\n")
     print(f"Extracted {len(extracted_frames)} frames")
     return frames_dir
 
