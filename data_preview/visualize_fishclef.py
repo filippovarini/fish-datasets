@@ -277,6 +277,10 @@ def extract_frames_from_videos(download_dir: Path, frames_dir: Path, coco_data: 
     """
     frames_dir.mkdir(parents=True, exist_ok=True)
     
+    if frames_dir.exists():
+        print(f"Frames directory already exists at {frames_dir}")
+        return frames_dir
+    
     video_name_to_video_path = {video_path.stem: video_path for video_path in download_dir.rglob("*.flv")}
     print(f"Found {len(video_name_to_video_path)} videos")
     
