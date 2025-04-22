@@ -118,24 +118,6 @@ Saleh A, Laradji IH, Konovalov DA, Bradley M, Vazquez D, Sheaves M. A realistic 
   
 <img src="./data_preview/deepfish_sample_image.jpg" width=700>  
   
-### The Brackish Dataset
-
-~90 videos with bounding boxes on fish
-  
-Detection of Marine Animals in a New Underwater Dataset with Varying Visibility, Pedersen, Malte and Haurum, Joakim Bruslund and Gade, Rikke and Moeslund, Thomas B. and Madsen, Niels, June, 2019
-
-* Data downloadable via via https from Kaggle (<a href="https://www.kaggle.com/datasets/aalborguniversity/brackish-dataset">download link</a>)
-* License: CC BY-SA 4.0
-* Metadata raw format: AAU, COCO, YOLO
-* Categories/species: fish, small fish, crab, shrimp, jellyfish, starfish
-* Vehicle type: underwater cameras in brackish water
-* Image information: 12,444 RGB images
-* Annotation information: 35,565  bounding boxes
-* Typical animal size in pixels: N/A
-* Code to render sample annotated image: <a href="./data_preview/visualise_brackish_dataset.py">visualise_brackish_dataset.py</a>
-  
-<img src="./data_preview/brackish_dataset_sample_image.png" width=700>
-  
   
 ### Deep Vision Fish Dataset
 
@@ -158,12 +140,12 @@ Vaneeda Allken, Shale Rosen (2020) Deep Vision fish dataset https://doi.org/10.2
   
 ### BrackishMOT
 
-98 videos of fish with tracking boxes (i.e., boxes with stable frame-to-frame IDs)
+98 videos of fish with tracking boxes (i.e., boxes with stable frame-to-frame IDs).
   
-Pedersen, Malte; Lehotský, Daniel; Nikolov, Ivan; Moeslund, Thomas B.  10.48550/ARXIV.2302.10645,BrackishMOT: The Brackish Multi-Object Tracking Dataset,arXiv,2023
+Pedersen M, Lehotský D, Nikolov I, Moeslund TB. Brackishmot: The brackish multi-object tracking dataset. InScandinavian Conference on Image Analysis 2023 Apr 18 (pp. 17-33). Cham: Springer Nature Switzerland.
 
 * Data downloadable via https from Kaggle (<a href="https://www.kaggle.com/datasets/maltepedersen/brackishmot">download link</a>)
-* License: CC BY-NC-SA 4.0
+* License: CC BY (licensed updated from NC in 2025.04)
 * Metadata raw format: N/A
 * Categories/species: small fish
 * Vehicle type: underwater cameras in brackish water
@@ -174,6 +156,43 @@ Pedersen, Malte; Lehotský, Daniel; Nikolov, Ivan; Moeslund, Thomas B.  10.48550
   
 <img src="https://lila.science/wp-content/uploads/2017/03/brackish-150.jpg" width=150>
   
+
+### The Brackish Dataset
+
+~90 videos with bounding boxes on fish.  Largely redundant with BrackishMOT (see above).
+  
+Detection of Marine Animals in a New Underwater Dataset with Varying Visibility, Pedersen, Malte and Haurum, Joakim Bruslund and Gade, Rikke and Moeslund, Thomas B. and Madsen, Niels, June, 2019
+
+* Data downloadable via via https from Kaggle (<a href="https://www.kaggle.com/datasets/aalborguniversity/brackish-dataset">download link</a>)
+* License: CC BY-SA 4.0
+* Metadata raw format: AAU, COCO, YOLO
+* Categories/species: fish, small fish, crab, shrimp, jellyfish, starfish
+* Vehicle type: underwater cameras in brackish water
+* Image information: 12,444 RGB images
+* Annotation information: 35,565  bounding boxes
+* Typical animal size in pixels: N/A
+* Code to render sample annotated image: <a href="./data_preview/visualise_brackish_dataset.py">visualise_brackish_dataset.py</a>
+  
+<img src="./data_preview/brackish_dataset_sample_image.png" width=700>
+
+
+### Brackish Underwater Dataset
+
+12.5k boxes on fish and other species in 15k images.  Largely redundant with BrackishMOT (see above).
+  
+Pedersen, M., Haurum, J. B., Gade, R., Moeslund, T. B., & Madsen, N. (2019). Detection of Marine Animals in a New Underwater Dataset with Varying Visibility. In The IEEE Conference on Computer Vision and Pattern Recognition (CVPR) Workshops, June 2019.
+
+* Data downloadable via https from Roboflow (<a href="https://public.roboflow.com/object-detection/brackish-underwater/">download link</a>)
+* License: CC BY 4.0 DEED 
+* Metadata raw format: YOLOv2, YOLOv3 CNNs
+* Categories/species: marine animals
+* Vehicle type: underwater cameras
+* Image information: 14,674 images (12,444 of which contain objects of interest with bounding box annotations)
+* Annotation information: bounding boxes
+* Typical animal size in pixels: 416 × 416
+  
+<img src="https://i.imgur.com/3dtuNhv.png" width=700>
+
   
 ### Visual Marine Animal Tracking
 
@@ -261,24 +280,6 @@ Several thousand BRUV images with bounding boxes on fish and bait
 * Typical animal size in pixels: N/A
   
 <img src="http://lila.science/wp-content/uploads/2017/03/fishtrack-boxes-150-1.png" width=150>
-  
-  
-### Brackish Underwater Dataset
-
-12.5k boxes on fish and other species in 15k images
-  
-Pedersen, M., Haurum, J. B., Gade, R., Moeslund, T. B., & Madsen, N. (2019). Detection of Marine Animals in a New Underwater Dataset with Varying Visibility. In The IEEE Conference on Computer Vision and Pattern Recognition (CVPR) Workshops, June 2019.
-
-* Data downloadable via https from Roboflow (<a href="https://public.roboflow.com/object-detection/brackish-underwater/">download link</a>)
-* License: CC BY 4.0 DEED 
-* Metadata raw format: YOLOv2, YOLOv3 CNNs
-* Categories/species: marine animals
-* Vehicle type: underwater cameras
-* Image information: 14,674 images (12,444 of which contain objects of interest with bounding box annotations)
-* Annotation information: bounding boxes
-* Typical animal size in pixels: 416 × 416
-  
-<img src="https://i.imgur.com/3dtuNhv.png" width=700>
   
   
 ### WildFish
