@@ -21,6 +21,7 @@ This effort was supported by the following folks:
 * <a href="https://www.linkedin.com/in/kameswari-devi-ayyagari-031820b7/">Devi Ayyagari</a>
 * <a href="https://www.linkedin.com/in/sonny-burniston/">Sonny Burniston</a>
 * <a href="https://www.linkedin.com/in/mona-dhiflaoui/">Mona Dhiflaoui</a>
+* <a href="https://www.linkedin.com/in/jiashu-chen-w/">Joshua Chen</a>
 
 Email <a href="mailto:fppvrn@gmail.com">Filippo</a> if anything seems off, or if you know of datasets we're missing.
 
@@ -41,10 +42,45 @@ Farrell DM, Ferriss B, Sanderson B, Veggerby K, Robinson L, Trivedi A, Pathak S,
 * Image information: 77,739 images
 * Annotation information: 67,990 bounding boxes
 * Typical animal size in pixels: N/A
-* Code to render sample annotated image: <a href="./data_preview/visualise_noaa_puget.py">visualise_noaa_puget.py</a>
+* Code to render sample annotated image: <a href="./data_preview/visualize_noaa_puget.py">visualize_noaa_puget.py</a>
   
 <img src="./data_preview/noaa_puget_sample_image.png" width=700>
+
+### Tasmanian Orange Roughy Stereo Image Machine Learning Dataset (TORSI)
+
+Annotated stereo imagery of orange roughy from 2019 Tasmanian survey, with expert-labeled bounding boxes for machine learning detection in fisheries science.
   
+Scoulding, Ben; Maguire, Kylie; Orenstein, Eric; Jackett, Chris; & CSIRO (2025): Tasmanian Orange Roughy Stereo Image Machine Learning Dataset. v1. CSIRO. Data Collection. https://doi.org/10.25919/a90r-4962
+
+* Data downloadable via via https from the CSIRO Portal (<a href="https://data.csiro.au/collection/64913">download link</a>)
+* License: CC BY-NC-SA 4.0
+* Metadata raw format: COCO
+* Categories/species: fish, eel, corals and other benthic organisms.
+* Vehicle type: Net-attached Acoustic and Optical System (AOS)
+* Image information: 1,051 images
+* Annotation information: 14,414 bounding boxes
+* Typical animal size in pixels: N/A
+* Code to render sample annotated image: <a href="./data_preview/visualize_torsi.py">visualize_torsi.py</a>
+  
+<img src="./data_preview/torsi_sample_image.png" width=700>
+  
+
+### CoralScapes
+
+2,027 images captured by diver-borne GoPro cameras from a variety of global coral reefs.
+  
+* Home: <https://josauder.github.io/coralscapes/>  
+* Data downloadable via HuggingFace from <https://huggingface.co/datasets/EPFL-ECEO/coralscapes>
+* License: Apache-2.0
+* Metadata raw format: Parquet
+* Categories/species: fish, coral, human, rock, etc.
+* Vehicle type: diver
+* Image information: 2,027 images
+* Annotation information: 174,000 segmentation annotations, of which 20,849 are fish
+* Code to render sample annotated image: <a href="./data_preview/visualize_noaa_puget.py">coralscapes_to_coco.py</a>
+  
+<img src="./data_preview/coralscapes-sample.jpg" width=700>
+
   
 ### Project Natick Underwater Video
 
@@ -60,7 +96,7 @@ https://nbn-resolving.org/urn:nbn:de:0168-ssoar-57615-2
 * Image information: 1118 RGB images (~5% of images have FN annotations)
 * Annotation information: 998 bounding boxes
 * Typical animal size in pixels: N/A
-* Code to render sample annotated image: <a href="./data_preview/visualise_project_natick.py">visualise_project_natick.py</a>
+* Code to render sample annotated image: <a href="./data_preview/visualize_project_natick.py">visualize_project_natick.py</a>
   
 <img src="./data_preview/project_natick_sample_image.png" width=700>
   
@@ -79,7 +115,7 @@ Solawetz, J. (2023, February 21). Fish object detection dataset. Roboflow. https
 * Image information: 1350 RGB images (the taxonomy is often inaccurate)
 * Annotation information: 3142 bounding boxes
 * Typical animal size in pixels: N/A
-* Code to render sample annotated image: <a href="./data_preview/visualise_roboflow_fish.py">visualise_roboflow_fish.py</a>
+* Code to render sample annotated image: <a href="./data_preview/visualize_roboflow_fish.py">visualize_roboflow_fish.py</a>
   
 <img src="./data_preview/roboflow_fish_sample_image.png" width=400>
   
@@ -115,10 +151,11 @@ Saleh A, Laradji IH, Konovalov DA, Bradley M, Vazquez D, Sheaves M. A realistic 
 * Vehicle type: underwater camera deployed over the side of a boat
 * Image information: 311 images with segmentation masks
 * Annotation information: 388 segmentation masks
+  Code to render sample annotated image: <a href="./data_preview/visualise_deepfish.py">visualise_deepfish.py</a>
   
 <img src="./data_preview/deepfish_sample_image.jpg" width=700>  
   
-  
+
 ### Deep Vision Fish Dataset
 
 Bboxed images of pelagic fish and associated segmentations
@@ -133,7 +170,7 @@ Vaneeda Allken, Shale Rosen (2020) Deep Vision fish dataset https://doi.org/10.2
 * Image information: 1875 RGB images
 * Annotation information: 4834 bounding boxes, segmentation masks
 * Typical animal size in pixels: N/A
-* Code to render sample annotated image: <a href="./data_preview/visualise_deep_vision.ipynb">visualise_deep_vision.ipynb</a>
+* Code to render sample annotated image: <a href="./data_preview/visualise_deep_vision.py">visualise_deep_vision.py</a>
   
 <img src="./data_preview/deep_vision_sample_image.png" width=700>
   
@@ -152,7 +189,7 @@ Pedersen M, Lehotský D, Nikolov I, Moeslund TB. Brackishmot: The brackish multi
 * Image information: N/A
 * Annotation information: N/A
 * Typical animal size in pixels: N/A
-* Code to rentdr sample annotated image: <a href="./data_preview/visualise_brackishmot.ipynb">visualise_brackishmot.ipynb</a>
+* Code to render sample annotated image: <a href="./data_preview/visualise_brackishmot.ipynb">visualise_brackishmot.ipynb</a>
   
 <img src="https://lila.science/wp-content/uploads/2017/03/brackish-150.jpg" width=150>
   
@@ -171,7 +208,7 @@ Detection of Marine Animals in a New Underwater Dataset with Varying Visibility,
 * Image information: 12,444 RGB images
 * Annotation information: 35,565  bounding boxes
 * Typical animal size in pixels: N/A
-* Code to render sample annotated image: <a href="./data_preview/visualise_brackish_dataset.py">visualise_brackish_dataset.py</a>
+* Code to render sample annotated image: <a href="./data_preview/visualise_brackish.py">visualise_brackish.py</a>
   
 <img src="./data_preview/brackish_dataset_sample_image.png" width=700>
 
@@ -208,7 +245,8 @@ Cai, L., McGuire, N.E., Hanlon, R. et al. Semi-supervised Visual Tracking of Mar
 * Image information: N/A
 * Annotation information: N/A
 * Typical animal size in pixels: N/A
-* Code to rentdr sample annotated image: <a href="./data_preview/visualise_vmat.ipynb">visualise_vmat.ipynb</a>
+* Code to render sample annotated image: <a href="./data_preview/visualise_vmat.ipynb">visualise_vmat.ipynb</a>
+
 <img src="./data_preview/vmat_sample_image.png" width=150>
   
   
@@ -227,8 +265,7 @@ Australian Institute of Marine Science (AIMS), University of Western Australia (
 * Annotation information: bounding boxes
 * Typical animal size in pixels: N/A
   
-  
-<img src="https://camo.githubusercontent.com/339ce4034b581a4276aefd7e1294a6977b4caa2d942d8cbcb5b7d5ae27e0faeb/68747470733a2f2f6f70656e2d41494d532e6769746875622e696f2f6f7a666973682f6669736863726f70732e706e673f7261773d74727565" width=700>
+<img src="./data_preview/ozfish-sample.B000448_R.MP4.37007-700.jpg" width=700>
   
   
 ### F4K Detection and Tracking
@@ -256,13 +293,14 @@ I. Kavasidis, S. Palazzo, R. Di Salvo, D. Giordano, C. Spampinato, A semi-automa
   
 Joly A., Goeau H., Glotin H., Spampinato C., Bonnet P., Vellinga W.-P., Planquè R., Rauber A., Palazzo S., Fisher R., and others}, LifeCLEF 2015: multimedia life species identification challenges, International Conference of the Cross-Language Evaluation Forum for European Languages, pp. 462-483, Springer, 2015.
 
-* Data downloadable via https from Github (<a href="https://github.com/perceivelab/FishCLEF-2015">download link</a>)
+* Data downloadable via https from Zenodo (<a href="https://zenodo.org/records/15202605/files/fishclef_2015_release.zip?download=1">download link</a>). Note, the dataset was [originally hosted on SharePoint](https://github.com/perceivelab/FishCLEF-2015). We uploaded it to Zenodo to make it downloadable programmatically.
 * Metadata raw format: XML
 * Categories/species: marine ray-finned fish 
 * Vehicle type: N/A
 * Image information: 20m000 images
 * Annotation information: 14,000 bounding boxes
 * Typical animal size in pixels: N/A
+* Code to rentdr sample annotated image: <a href="./data_preview/visualize_fishclef.py">visualize_fishclef.py</a>
   
 <img src="http://lila.science/wp-content/uploads/2017/03/fishclef_2015-150.png" width=150>
   
@@ -271,15 +309,15 @@ Joly A., Goeau H., Glotin H., Spampinato C., Bonnet P., Vellinga W.-P., Planquè
 
 Several thousand BRUV images with bounding boxes on fish and bait
   
-* Data downloadable from Viame (<a href="https://viame.kitware.com/#/collection/62afcb66dddafb68c8442126">download link</a>)
+* Data downloadable from Viame (<a href="https://viame.kitware.com/#/collection/65a140e8a4c218785d408b42">download link</a>)
 * Metadata raw format: N/A
-* Categories/species: N/A
+* Categories/species: General Fish, Fish Species, Bait and Algae
 * Vehicle type: BRUV
-* Image information: thousands of images
+* Image information: ~20,000
 * Annotation information: bounding boxes
-* Typical animal size in pixels: N/A
+* Code to rentdr sample annotated image: <a href="./data_preview/visualize_viame_fishtrack.py">visualize_viame_fishtrack.py</a>
   
-<img src="http://lila.science/wp-content/uploads/2017/03/fishtrack-boxes-150-1.png" width=150>
+<img src="./data_preview/viame_fishtrack_sample_image.png" width=150>
   
   
 ### WildFish
@@ -366,7 +404,7 @@ Bruslund Haurum J, Karpova A, Pedersen M, Hein Bengtson S, Moeslund TB. Re-ident
 * Image information: 2224 images
 * Annotation information: AAU VAP bounding boxes
 * Typical animal size in pixels: N/A
-* Code to render sample annotated image: <a href="./data_preview/visualize_Zebrafish_dataset.ipynb">visualize_Zebrafish_dataset.ipynb</a>
+* Code to render sample annotated image: <a href="./data_preview/visualize_zebrafish.py">visualize_zebrafish.py</a>
   
 <img src="./data_preview/Zebrafish_sample_image.png" width=150>
   

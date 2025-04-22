@@ -2,7 +2,10 @@ downloads
 __pycache__
 __init__.py
 tmp/
+data/
 *.zip
 local
 .ipynb_checkpoints
 .env
+final_dataset/
+data/
