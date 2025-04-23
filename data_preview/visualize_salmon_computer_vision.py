@@ -1,3 +1,4 @@
+
 """
 
 This notebook convert this dataset to COCO:
@@ -29,11 +30,23 @@ It doesn't matter a lot in our case, since we're reducing everything to just "fi
 
 """
 
-#%% Imports and constants
 
 import os
+from megadetector.utils.path_utils import recursive_file_list
+from megadetector.utils.path_utils import is_image_file
+from tqdm import tqdm
+from megadetector.data_management.yolo_to_coco import yolo_to_coco
+from megadetector.data_management.databases.integrity_check_json_db import \
+    IntegrityCheckOptions, integrity_check_json_db
+from megadetector.visualization.visualize_db import \
+    DbVizOptions, visualize_db
 
-dataset_root = r'i:\data\salmon'
+    
+
+
+
+
+dataset_root = r'i:\salmon'
 bytetrack_root = os.path.join(dataset_root,'bytetrack_salmon/datasets/salmon')
 yolo_root = os.path.join(dataset_root,'yolov6_salmon/export_yolov6_combined_bear_kitwanga_preprocess_yolo')
 
@@ -41,9 +54,7 @@ assert os.path.isdir(bytetrack_root)
 assert os.path.isdir(yolo_root)
 
 
-#%% List files in both versions of the dataset
 
-from megadetector.utils.path_utils import recursive_file_list
 bytetrack_files_relative = recursive_file_list(bytetrack_root,return_relative_paths=True)
 yolo_files_relative = recursive_file_list(yolo_root,return_relative_paths=True)
 
@@ -56,9 +67,7 @@ Enumerated 2782343 files in the yolo folder
 """
 
 
-#%% Find image files in both versions of the dataset
-
-from megadetector.utils.path_utils import is_image_file
+# Find image files in both versions of the dataset
 bytetrack_image_files = [fn for fn in bytetrack_files_relative if is_image_file(fn)]
 yolo_image_files = [fn for fn in yolo_files_relative if is_image_file(fn)]
 
@@ -75,10 +84,7 @@ the bytetrack data.
 """
 
 
-#%% Make sure there is a YOLO annotation file for every image in the YOLO dataset
-
-from tqdm import tqdm
-
+# Make sure there is a YOLO annotation file for every image in the YOLO dataset
 """
 
 Sample image/label files:
@@ -103,10 +109,7 @@ for fn in tqdm(yolo_text_files):
     assert text_filename_root in yolo_image_root_names_set
 
 
-#%% Convert to COCO
-
-from megadetector.data_management.yolo_to_coco import yolo_to_coco
-    
+# Convert to COCO    
 yolo_image_root = os.path.join(yolo_root,'images')    
 yolo_label_root = os.path.join(yolo_root,'labels')
 yolo_dataset_file = os.path.join(yolo_root,'2023_combined_salmon.yaml')
@@ -146,11 +149,7 @@ _ = yolo_to_coco(input_folder=input_folder,
                  label_folder=label_folder)
 
 
-#%% Validate the output
-
-from megadetector.data_management.databases.integrity_check_json_db import \
-    IntegrityCheckOptions, integrity_check_json_db
-    
+# Validate the output
 options = IntegrityCheckOptions()
 options.baseDir = input_folder
 options.bCheckImageSizes = False
@@ -164,11 +163,7 @@ options.allowIntIDs = False
 sorted_categories,d,error_info = integrity_check_json_db(coco_dataset_file,options)
 
 
-#%% Preview
-
-from megadetector.visualization.visualize_db import \
-    DbVizOptions, visualize_db
-
+# Preview
 preview_folder = r'g:\temp\salmon-preview'
 
 options = DbVizOptions()

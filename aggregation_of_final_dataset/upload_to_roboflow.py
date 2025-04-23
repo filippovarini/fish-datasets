@@ -1,5 +1,5 @@
 from pathlib import Path
-import os
+import os, sys
 
 from dotenv import load_dotenv
 from roboflow import Roboflow, Project
@@ -11,7 +11,7 @@ settings = Settings()
 
 load_dotenv()
 
-DATASET_TO_UPLOAD = "project_natick"
+DATASET_TO_UPLOAD = sys.argv[1]
 
 
 def _get_roboflow_project():

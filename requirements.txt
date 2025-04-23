@@ -9,3 +9,6 @@ kagglehub==0.3.11
 tqdm==4.67.0
 scikit-learn==1.5.2
 roboflow==1.1.49
+megadetector==5.0.27
+pyarrow==19.0.1
+PyQt5==5.15.11
