@@ -65,6 +65,8 @@ def compress_annotations_to_single_category(
     # Store the new annotation file
     with open(output_path, "w") as f:
         json.dump(coco_data, f, indent=2)
+    
+    return output_path
 
 
 def convert_coco_annotations_from_0_indexed_to_1_indexed(
@@ -163,17 +165,17 @@ def split_coco_dataset_into_train_validation(
             target_image_ids = val_image_ids
             target_images_path = val_images_path
 
-        # Add image to the appropriate split
-        target_image_ids.add(image["id"])
-        target_coco["images"].append(image)
-
         # Copy the image file to the target directory
         source_image_path = source_images_path / Path(filename).name
         target_image_path = target_images_path / Path(filename).name
 
-        assert (
-            source_image_path.exists()
-        ), f"Source image not found: {source_image_path}"
+        if not source_image_path.exists():
+            print(f"⚠️⚠️ Source image not found: {source_image_path}")
+            continue
+        
+        # Add image to the appropriate split
+        target_image_ids.add(image["id"])
+        target_coco["images"].append(image)
 
         # only copy if the target image does not exist
         if not target_image_path.exists():

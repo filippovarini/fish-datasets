@@ -4,7 +4,7 @@ import random
 import supervision as sv
 
 from aggregation_of_final_dataset.settings import Settings
-from data_preview.visualise_project_natick import (
+from data_preview.visualize_project_natick import (
     DATASET_SHORTNAME,
     download_data,
     add_extension_to_filename,
