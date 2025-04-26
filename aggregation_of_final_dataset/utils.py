@@ -5,6 +5,7 @@ from typing import Callable, List, Optional
 
 from aggregation_of_final_dataset.settings import Settings
 
+import random
 
 settings = Settings()
 
@@ -212,3 +213,39 @@ def split_coco_dataset_into_train_validation(
     print(
         f"  - Validation: {len(val_coco['images'])} images, {len(val_coco['annotations'])} annotations"
     )
+
+
+def get_train_images_with_random_splitting(image_folder: Path) -> list[str]:
+    # Split the images randomly as all are from the same camera, location and datetime
+    all_images = list(image_folder.glob("*.jpg"))
+    train_ratio = 1 - settings.train_val_split_ratio
+    train_size = int(len(all_images) * train_ratio)
+    train_images = random.sample(all_images, train_size)
+    train_images = [image.name for image in train_images]
+    return train_images
+
+def copy_images_to_processing(dataset_shortname,source_images_path: Path):
+    for image in source_images_path.glob("*"):
+        destination = settings.intermediate_dir / dataset_shortname / "JPEGImages" /  image.name
+        if destination.exists():
+            raise FileExistsError(
+                f"⚠️ Conflict: '{destination.name}' already exists!"
+            )
+        shutil.copy(image, destination)
+
+def add_dataset_shortname_to_image_names(dataset_shortname, images_path:Path, annotations_path):
+    # adding dataset shortname to each image name in order to avoid conflicts when merging all the datasets
+    for image in images_path.glob("*"):
+        new_path = image.with_name(dataset_shortname + "_" + image.name)
+        image.rename(new_path)
+
+    # Adjusting the annotations with new names
+    with open(annotations_path, 'r', encoding='utf-8') as annotations_file:
+        annotations_json = json.load(annotations_file)
+    for image in annotations_json["images"]:
+        old_filename = image["file_name"]
+        new_filename = dataset_shortname + "_" + old_filename
+        image["file_name"] = new_filename
+    
+    with open(annotations_path, 'w', encoding='utf-8') as annotations_file:
+        json.dump(annotations_json, annotations_file, indent=2)

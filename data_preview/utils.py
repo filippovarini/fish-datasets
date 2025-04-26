@@ -4,6 +4,7 @@ import tarfile
 import random
 from pathlib import Path
 from enum import Enum
+import matplotlib, cv2
 
 import supervision as sv
 
@@ -85,6 +86,9 @@ def visualize_supervision_dataset(
     dataset, num_samples=16, grid_size=(4, 4), size=(20, 12)
 ):
     """Visualize random samples from a dataset with bounding boxes and labels."""
+
+    matplotlib.use("Qt5Agg")
+    
     print(f"Dataset length: {len(dataset)}")
     print(f"Dataset classes: {dataset.classes}")
     print(
@@ -140,3 +144,8 @@ def build_and_visualize_supervision_dataset_from_coco_dataset(
 
     image_example = visualize_supervision_dataset(dataset)
     return image_example
+
+def save_sample_image(dataset_shortname, image):
+
+    data_preview_path =  Path(f"./data_preview/{dataset_shortname}_sample_image.png")
+    cv2.imwrite(data_preview_path, image)

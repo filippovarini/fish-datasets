@@ -1,5 +1,5 @@
 from pathlib import Path
-import os
+import os, sys
 
 from dotenv import load_dotenv
 from roboflow import Roboflow, Project
@@ -10,6 +10,7 @@ from aggregation_of_final_dataset.settings import Settings
 settings = Settings()
 
 load_dotenv()
+
 
 DATASET_TO_UPLOAD = "fishclef"
 
