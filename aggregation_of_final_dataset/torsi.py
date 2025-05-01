@@ -1,3 +1,9 @@
+## The dataset can't be downloaded programmatically.
+## Please download it from the following link:
+## https://data.csiro.au/collection/64913
+## 
+## Once Downloaded, put the .zip file in the folder fish-datasets/data/raw/torsi (create the folder if not exists)
+
 import json
 from pathlib import Path
 from aggregation_of_final_dataset.settings import Settings
@@ -18,11 +24,6 @@ images_path = processing_dir / "JPEGImages"
 
 
 
-## The dataset can't be downloaded programmatically.
-## Please download it from the following link:
-## https://data.csiro.au/collection/64913
-## 
-## Once Downloaded, put the .zip file in the folder fish-datasets/data/raw/torsi (create the folder if not exists)
 
 def adjust_path():
     # remove relative path from json leaving only the name of the images

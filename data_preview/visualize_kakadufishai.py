@@ -3,9 +3,10 @@ import supervision as sv
 from pathlib import Path
 import random
 from aggregation_of_final_dataset.settings import Settings
-from data_preview.utils import save_sample_image, build_and_visualize_supervision_dataset_from_coco_dataset
+from data_preview.utils import save_sample_image, build_and_visualize_supervision_dataset_from_coco_dataset, download_file
 import json
 import subprocess
+import sys
 
 
 
@@ -13,21 +14,39 @@ settings = Settings()
 dataset_shortname = "kakadu"
 data_dir = settings.raw_dir / dataset_shortname
 data = 'https://zenodo.org/record/7250921/files/202210-KakaduFishAI-TrainingData.zip?download=1'
-data_path = data_dir / "kakadu_data.zip"
+data_path = data_dir / "kakadu.zip"
 images_path = data_dir
 annotations_path = data_dir / "KakaduFishAI_boundingbox.json"
+
+def data_extraction():
+    try:
+        subprocess.run(["unzip", str(data_path), "-d", str(data_dir)], check=True)
+        data_path.unlink()
+    except:
+        print(f'\nError during extraction. Please install "unzip" tool (Linux/MacOS) or extract manually the data. \n\nIn case of manual Extraction, the result must be: data / raw / kakadu / (1.jpg | 2.jpg | 3.jpg | …)\n')
+        sys.exit()
 
 
 def download_data():
     # ## Download the Data
-    # - If you want to use the `unzip` command you might need to install it. 
-    # On linux, run `sudo apt-get install unzip`
-    data_dir.mkdir(exist_ok=True, parents=True)
+    if not data_dir.exists():
+        data_dir.mkdir(exist_ok=True, parents=True)
+    
+    data_folder_content = list(data_dir.iterdir())
 
-    subprocess.run(["curl", "-L", data, "-o", str(data_path)], check=True)
-    subprocess.run(["unzip", str(data_path), "-d", str(data_dir)], check=True)
-    subprocess.run(["rm", str(data_path)], check=True)
+    match len(data_folder_content):
 
+        case 0:
+            download_file(data, data_path)
+            data_extraction()
+
+        case 1: # User has now installed unzip (assuming the only file present is the zip file)
+            data_extraction()
+
+        case _:
+            print("Data already present!")
+            if data_path.exists():
+                data_path.unlink()
 
 
 

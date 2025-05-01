@@ -32,7 +32,8 @@ DATASETS = ["marine_detect_megafauna", "marine_detect_fishinv"]
 
 data_URLs = {
     "marine_detect_megafauna": "https://stpubtenakanclyw.blob.core.windows.net/marine-detect/MegaFauna-dataset.zip", 
-    "marine_detect_fishinv": "https://stpubtenakanclyw.blob.core.windows.net/marine-detect/FishInv-dataset.zip"}
+    "marine_detect_fishinv": "https://stpubtenakanclyw.blob.core.windows.net/marine-detect/FishInv-dataset.zip"
+    }
 
 
 
