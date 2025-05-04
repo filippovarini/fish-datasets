@@ -93,6 +93,45 @@ def convert_coco_annotations_from_0_indexed_to_1_indexed(
     return output_coco_annotations_path
 
 
+def add_dataset_shortname_prefix_to_image_names(
+    images_path: Path,
+    annotations_path: Path,
+    dataset_shortname: str,
+) -> None:
+    """
+    Converts the image filenames to be f"{dataset_shortname}_{image_filename}"
+    """
+    # Assert all paths are valid
+    if not images_path.exists():
+        raise FileNotFoundError(f"Images folder not found at {images_path}")
+    if not annotations_path.exists():
+        raise FileNotFoundError(f"Annotations file not found at {annotations_path}")
+    
+    # Load the annotations
+    with open(annotations_path, "r") as f:
+        coco_data = json.load(f)
+    
+    # Add the dataset shortname prefix to the image filenames
+    for image in coco_data["images"]:
+        old_image_filename = Path(image["file_name"]).name
+        new_image_filename = f"{dataset_shortname}_{old_image_filename}"
+        
+        # Rename the image file
+        old_image_path = images_path / old_image_filename
+        new_image_path = images_path / new_image_filename
+        assert old_image_path.exists(), f"Image not found at {old_image_path}"
+        assert not new_image_path.exists(), f"Image already exists at {new_image_path}"
+        old_image_path.rename(new_image_path)
+        
+        # Update the annotation with the new image filename
+        image["file_name"] = new_image_filename
+    
+    # Save the annotations
+    with open(annotations_path, "w") as f:
+        json.dump(coco_data, f, indent=2)
+    
+
+
 def split_coco_dataset_into_train_validation(
     source_images_path: Path,
     source_annotations_path: Path,
