@@ -107,9 +107,7 @@ def extract_example_image(images_path, annotations_path, dataset_shortname):
 def download_data(data_dir):
     data_dir.mkdir(exist_ok=True, parents=True)
 
-    roboflow_api_key = os.getenv("ROBOFLOW_KEY_ROBOFLOW_FISH")
-    print(f"ROBOFLOW_KEY: {roboflow_api_key}")
-    data_url = f"https://public.roboflow.com/ds/KJiCisn7wU?key={roboflow_api_key}"
+    data_url = "https://public.roboflow.com/ds/KJiCisn7wU?key=9Qk3A2qMF6"
 
     data_path = data_dir / "roboflow_fish.zip"
 

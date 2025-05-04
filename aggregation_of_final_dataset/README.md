@@ -5,4 +5,7 @@
 4. Aggregate each dataset by following the guides below
 
 ### Project Natick
-- Simply run `python aggregation_of_final_dataset/project_natick.py`
+1. Simply run `python aggregation_of_final_dataset/project_natick.py`
+
+### Roboflow Fish
+1. Simply run `python aggregation_of_final_dataset/roboflow_fish.py`
