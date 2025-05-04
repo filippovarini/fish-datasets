@@ -9,3 +9,6 @@
 
 ### Roboflow Fish
 1. Simply run `python aggregation_of_final_dataset/roboflow_fish.py`
+
+### Zebrafish
+1. Simply run `python aggregation_of_final_dataset/zebrafish.py`
