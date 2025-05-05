@@ -27,20 +27,23 @@ def download_file(url: str, save_path: Path):
 
         # Get file size for progress bar
         total_size = int(response.headers.get("content-length", 0))
-        
+
         # Initialize tqdm with total file size
-        with open(save_path, "wb") as f, tqdm(
-            desc=save_path.name,
-            total=total_size,
-            unit="B",
-            unit_scale=True,
-            unit_divisor=1024,
-        ) as pbar:
+        with (
+            open(save_path, "wb") as f,
+            tqdm(
+                desc=save_path.name,
+                total=total_size,
+                unit="B",
+                unit_scale=True,
+                unit_divisor=1024,
+            ) as pbar,
+        ):
             # Increased chunk size from 8192 to 1MB for faster downloads
-            for chunk in response.iter_content(chunk_size=1024*1024):
+            for chunk in response.iter_content(chunk_size=1024 * 1024):
                 f.write(chunk)
                 pbar.update(len(chunk))
-    
+
     print(f"Download complete: {save_path}")
 
 
@@ -50,7 +53,17 @@ def extract_downloaded_file(
     compression_type: CompressionType = CompressionType.ZIP,
 ):
     print(f"Extracting {download_path} to {extract_to}")
-    
+
+    uncompressed_files = [
+        f.suffix
+        for f in extract_to.glob("*")
+        if not f.suffix == f".{compression_type.value}"
+    ]
+
+    if extract_to.exists() and len(uncompressed_files) > 0:
+        print(f"Extracted file already exists: {extract_to}")
+        return
+
     if not download_path.exists():
         print("Compressed file not found")
         return
@@ -89,6 +102,7 @@ def download_and_extract(
         download_file(data_url, download_path)
         print("Extracting data...")
         extract_downloaded_file(download_path, data_dir, compression_type)
+
     return data_dir
 
 
