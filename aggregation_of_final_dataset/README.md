@@ -21,3 +21,6 @@
 
 ### Deepfish
 1. Simply run `python aggregation_of_final_dataset/deepfish.py`
+
+### Deepvision
+1. Simply run `python aggregation_of_final_dataset/deep_vision.py`
