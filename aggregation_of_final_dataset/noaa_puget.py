@@ -7,6 +7,8 @@ from data_preview.visualize_noaa_puget import download_data, DATASET_SHORTNAME
 from aggregation_of_final_dataset.utils import (
     compress_annotations_to_single_category,
     split_coco_dataset_into_train_validation,
+    add_dataset_shortname_prefix_to_image_names,
+    convert_coco_annotations_from_0_indexed_to_1_indexed
 )
 from settings import Settings
 
@@ -16,7 +18,7 @@ settings = Settings()
 def get_unique_camera_names(image_folder: Path) -> Set:
     camera_names = set()
     for image_path in image_folder.glob("*.jpg"):
-        camera_names.add(image_path.stem.split("_")[0])
+        camera_names.add(image_path.stem.split("_")[2])
 
     return camera_names
 
@@ -39,28 +41,39 @@ def main():
     raw_download_path.mkdir(parents=True, exist_ok=True)
     download_data(raw_download_path)
 
-    # 2. PROCESSING
+    # # 2. PROCESSING
     processing_dir = settings.intermediate_dir / DATASET_SHORTNAME
     processing_dir.mkdir(parents=True, exist_ok=True)
 
     # Create COCO Dataset and store in intermediate directory
     # We compress all annotations into a single category: Fish
     raw_annotations_path = raw_download_path / "noaa_estuary_fish-2023.08.19.json"
+    annotations_path_1_indexed = processing_dir / "noaa_puget_annotations_1_indexed.json"
+    convert_coco_annotations_from_0_indexed_to_1_indexed(
+        raw_annotations_path, annotations_path_1_indexed
+    )
+    
     categories_to_keep = ["fish"]
     compressed_annotations_path = (
         processing_dir / "noaa_puget_compressed_annotations.json"
     )
     compressed_annotations_path = compress_annotations_to_single_category(
-        raw_annotations_path, categories_to_keep, compressed_annotations_path
+        annotations_path_1_indexed, categories_to_keep, compressed_annotations_path
     )
 
     # 3. FINAL
     images_path = raw_download_path / settings.images_folder_name
 
+    # add_dataset_shortname_prefix_to_image_names(
+    #     images_path=images_path,
+    #     annotations_path=compressed_annotations_path,
+    #     dataset_shortname=DATASET_SHORTNAME,
+    # )
+
     # Build Logic to split into train and val based on camera name
     train_camera_names = get_list_of_cameras_to_include_in_train_set(images_path)
     should_the_image_be_included_in_train_set = (
-        lambda image_name: image_name.split("_")[0] in train_camera_names
+        lambda image_name: image_name.split("_")[2] in train_camera_names
     )
 
     train_dataset_path = (

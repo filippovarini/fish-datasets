@@ -107,6 +107,8 @@ def add_dataset_shortname_prefix_to_image_names(
     if not annotations_path.exists():
         raise FileNotFoundError(f"Annotations file not found at {annotations_path}")
     
+    print(f"Adding dataset shortname prefix to image names: {dataset_shortname} - might take a while...")
+    
     # Load the annotations
     with open(annotations_path, "r") as f:
         coco_data = json.load(f)
@@ -114,6 +116,10 @@ def add_dataset_shortname_prefix_to_image_names(
     # Add the dataset shortname prefix to the image filenames
     for image in coco_data["images"]:
         old_image_filename = Path(image["file_name"]).name
+        
+        if old_image_filename.startswith(dataset_shortname):
+            continue
+        
         new_image_filename = f"{dataset_shortname}_{old_image_filename}"
         
         # Rename the image file
@@ -130,6 +136,14 @@ def add_dataset_shortname_prefix_to_image_names(
     with open(annotations_path, "w") as f:
         json.dump(coco_data, f, indent=2)
     
+
+def remove_dataset_shortname_prefix_from_image_filename(
+    image_filename: str, dataset_shortname: str
+) -> str:
+    """
+    Removes the dataset shortname prefix from the image filenames.
+    """
+    return image_filename.replace(f"{dataset_shortname}_", "")
 
 
 def split_coco_dataset_into_train_validation(

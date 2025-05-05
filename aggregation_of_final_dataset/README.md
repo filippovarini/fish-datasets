@@ -12,3 +12,9 @@
 
 ### Zebrafish
 1. Simply run `python aggregation_of_final_dataset/zebrafish.py`
+
+### NOAA Puget
+1. Simply run `python aggregation_of_final_dataset/noaa_puget.py`
+
+### Brackish Dataset
+1. Simply run `python aggregation_of_final_dataset/brackish.py`

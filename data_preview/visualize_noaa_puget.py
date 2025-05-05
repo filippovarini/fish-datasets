@@ -3,7 +3,12 @@ import supervision as sv
 from pathlib import Path
 import json
 
-from data_preview.utils import visualize_supervision_dataset, download_file, extract_downloaded_file
+from data_preview.utils import (
+    visualize_supervision_dataset,
+    download_file,
+    extract_downloaded_file,
+    CompressionType,
+)
 
 
 DATASET_SHORTNAME = "noaa_puget"
@@ -33,8 +38,9 @@ def clean_annotations(annotations_path: Path):
         json.dump(annotations, f)
 
 
-
-def extract_example_image(images_path: Path, annotations_path: Path, dataset_shortname: str):
+def extract_example_image(
+    images_path: Path, annotations_path: Path, dataset_shortname: str
+):
     dataset = sv.DetectionDataset.from_coco(
         images_directory_path=str(images_path),
         annotations_path=str(annotations_path),
@@ -42,36 +48,36 @@ def extract_example_image(images_path: Path, annotations_path: Path, dataset_sho
 
     image_example = visualize_supervision_dataset(dataset)
     plt.imsave(f"{dataset_shortname}_sample_image.png", image_example)
-    
+
 
 def download_data(data_dir: Path):
+    if data_dir.exists():
+        print(f"Data already exists: {data_dir}")
+        return
+
     data_dir.mkdir(exist_ok=True, parents=True)
-    
+
     data_url = "https://storage.googleapis.com/public-datasets-lila/noaa-psnf/noaa_estuary_fish-images.zip"
     annotations_url = "https://storage.googleapis.com/public-datasets-lila/noaa-psnf/noaa_estuary_fish-annotations-2023.08.19.zip"
 
     data_path_zip = data_dir / "images.zip"
     annotations_path_zip = data_dir / "annotations.zip"
-    
-    if not IMAGES_PATH.exists() or not ANNOTATIONS_PATH.exists():
-        print("Extracting data...")
-        download_file(data_url, data_path_zip)
-        download_file(annotations_url, annotations_path_zip)
-        
-        extract_downloaded_file(data_path_zip, DATA_DIR, CompressionType.ZIP)
-        extract_downloaded_file(annotations_path_zip, DATA_DIR, CompressionType.ZIP)
-    else:
-        print("Data already downloaded and extracted")
-    
+
+    print("Extracting data...")
+    download_file(data_url, data_path_zip)
+    download_file(annotations_url, annotations_path_zip)
+
+    extract_downloaded_file(data_path_zip, data_dir, CompressionType.ZIP)
+    extract_downloaded_file(annotations_path_zip, data_dir, CompressionType.ZIP)
 
 
 def main():
     download_data(DATA_DIR)
-    
+
     clean_annotations(ANNOTATIONS_PATH)
-    
+
     extract_example_image(IMAGES_PATH, ANNOTATIONS_PATH, DATASET_SHORTNAME)
-    
-    
+
+
 # if __name__ == "__main__":
 #     main()

@@ -15,10 +15,14 @@ class CompressionType(Enum):
 
 
 def download_file(url: str, save_path: Path):
+    if save_path.exists():
+        print(f"File already exists: {save_path}")
+        return
+
     print(f"Downloading {url} to {save_path}...")
     response = requests.get(url, stream=True)
     response.raise_for_status()  # Raise an exception for HTTP errors
-    
+
     # Get file size for progress bar
     total_size = int(response.headers.get("content-length", 0))
     
