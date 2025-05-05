@@ -76,12 +76,16 @@ def get_boxes_from_mask_image(mask_file):
             bbox[2] - bbox[0],  # height
         ]
 
+        area = coco_bbox[2] * coco_bbox[3]
+
         # Create annotation entry
         annotation = {
             "id": f"{image_id}_{str(idx).zfill(3)}",
             "image_id": image_id,
             "category_id": 1,
             "bbox": coco_bbox,
+            "area": area,
+            "iscrowd": 0,
         }
         annotations.append(annotation)
 
