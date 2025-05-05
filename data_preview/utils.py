@@ -20,23 +20,26 @@ def download_file(url: str, save_path: Path):
         return
 
     print(f"Downloading {url} to {save_path}...")
-    response = requests.get(url, stream=True)
-    response.raise_for_status()  # Raise an exception for HTTP errors
+    # Use a session for connection pooling
+    with requests.Session() as session:
+        response = session.get(url, stream=True)
+        response.raise_for_status()  # Raise an exception for HTTP errors
 
-    # Get file size for progress bar
-    total_size = int(response.headers.get("content-length", 0))
-    
-    # Initialize tqdm with total file size
-    with open(save_path, "wb") as f, tqdm(
-        desc=save_path.name,
-        total=total_size,
-        unit="B",
-        unit_scale=True,
-        unit_divisor=1024,
-    ) as pbar:
-        for chunk in response.iter_content(chunk_size=8192):
-            f.write(chunk)
-            pbar.update(len(chunk))
+        # Get file size for progress bar
+        total_size = int(response.headers.get("content-length", 0))
+        
+        # Initialize tqdm with total file size
+        with open(save_path, "wb") as f, tqdm(
+            desc=save_path.name,
+            total=total_size,
+            unit="B",
+            unit_scale=True,
+            unit_divisor=1024,
+        ) as pbar:
+            # Increased chunk size from 8192 to 1MB for faster downloads
+            for chunk in response.iter_content(chunk_size=1024*1024):
+                f.write(chunk)
+                pbar.update(len(chunk))
     
     print(f"Download complete: {save_path}")
 
