@@ -24,3 +24,6 @@
 
 ### Deepvision
 1. Simply run `python aggregation_of_final_dataset/deep_vision.py`
+
+### Viame Fishtrack
+1. Simply run `python aggregation_of_final_dataset/viame_fishtrack.py`

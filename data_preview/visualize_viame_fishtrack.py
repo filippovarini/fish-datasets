@@ -323,7 +323,7 @@ def download_data_and_build_coco_dataset(
         print(f"Images loaded in coco dataset: {len(coco_data['images'])}")
 
     # Save the COCO annotations
-    annotations_path = coco_dataset_path / "annotations.json"
+    annotations_path = coco_dataset_path / "annotations_coco.json"
     with open(annotations_path, "w") as f:
         json.dump(coco_data, f)
 
