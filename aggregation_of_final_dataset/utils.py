@@ -125,8 +125,13 @@ def add_dataset_shortname_prefix_to_image_names(
         # Rename the image file
         old_image_path = images_path / old_image_filename
         new_image_path = images_path / new_image_filename
-        assert old_image_path.exists(), f"Image not found at {old_image_path}"
-        assert not new_image_path.exists(), f"Image already exists at {new_image_path}"
+        try:
+            assert old_image_path.exists(), f"Image not found at {old_image_path}"
+            assert not new_image_path.exists(), f"Image already exists at {new_image_path}"
+        except Exception as e:
+            print(f"⚠️⚠️ Error renaming image {old_image_filename} to {new_image_filename}: {e}")
+            continue
+        
         old_image_path.rename(new_image_path)
         
         # Update the annotation with the new image filename

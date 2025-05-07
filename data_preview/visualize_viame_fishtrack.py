@@ -250,6 +250,7 @@ def viame_to_coco(camera_path: Path, images_dir: Path, coco_data: dict):
                 "category_id": 1,  # We only keep one fish category
                 "bbox": [xmin, ymin, width, height],
                 "area": width * height,
+                "iscrowd": 0,
             }
         )
 
