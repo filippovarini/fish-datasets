@@ -11,3 +11,4 @@ final_dataset/
 data/
 test.ipynb
 .vscode/
+venv/

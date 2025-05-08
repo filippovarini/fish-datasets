@@ -33,7 +33,12 @@ It doesn't matter a lot in our case, since we're reducing everything to just "fi
 
 import os
 
-dataset_root = r'i:\data\salmon'
+print(f"Before continuing, please download the dataset from the following link:")
+print(f"https://github.com/Salmon-Computer-Vision/salmon-computer-vision")
+print(f"and extract the zipfiles into the current directory.")
+
+dataset_root = input("After extracting the zipfiles, enter the path to the dataset root: ")
+
 bytetrack_root = os.path.join(dataset_root,'bytetrack_salmon/datasets/salmon')
 yolo_root = os.path.join(dataset_root,'yolov6_salmon/export_yolov6_combined_bear_kitwanga_preprocess_yolo')
 
