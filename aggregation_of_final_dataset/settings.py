@@ -3,9 +3,10 @@ from dataclasses import dataclass
 
 @dataclass
 class Settings:
-    raw_dir: Path = Path("/Users/filippovarini/Desktop/Development/fish-datasets/data/raw")
-    processed_dir: Path = Path("/Users/filippovarini/Desktop/Development/fish-datasets/data/final")
-    intermediate_dir: Path = Path("/Users/filippovarini/Desktop/Development/fish-datasets/data/processing")
+    base_dir = Path("/Volumes/KINGSTON/mfd")
+    raw_dir: Path = base_dir / "raw"
+    processed_dir: Path = base_dir / "final"
+    intermediate_dir: Path = base_dir / "processing"
     
     train_dataset_suffix: str = "_train"
     val_dataset_suffix: str = "_val"
