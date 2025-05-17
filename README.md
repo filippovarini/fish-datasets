@@ -46,6 +46,24 @@ Farrell DM, Ferriss B, Sanderson B, Veggerby K, Robinson L, Trivedi A, Pathak S,
   
 <img src="./data_preview/noaa_puget_sample_image.png" width=700>
 
+### MIT Sea Grant River Herring
+
+Images of freshwater fish taken from underwater videos with 91,482 bounding boxes
+  
+[Project Website](https://www.woodwellclimate.org/project/fisheye/)
+
+* Data downloadable via via https from LILA (<a href="https://lila.science/datasets/mit-sea-grant-river-herring/">download link</a>)
+* License: CDLA-permissive 1.0
+* Metadata raw format: COCO
+* Categories/species: fish
+* Vehicle type: Frames taken fromUnderwater Videos
+* Image information: 262,050 images
+* Annotation information: 91,482 bounding boxes
+* Typical animal size in pixels: N/A
+* Code to render sample annotated image: <a href="./data_preview/visualize_mit_river_herring.py">visualize_mit_river_herring.py</a>
+  
+<img src="./data_preview/mit_river_herring_sample_image.png" width=700>
+
 ### Tasmanian Orange Roughy Stereo Image Machine Learning Dataset (TORSI)
 
 Annotated stereo imagery of orange roughy from 2019 Tasmanian survey, with expert-labeled bounding boxes for machine learning detection in fisheries science.
