@@ -8,7 +8,8 @@ from aggregation_of_final_dataset.utils import (
     compress_annotations_to_single_category,
     split_coco_dataset_into_train_validation,
     add_dataset_shortname_prefix_to_image_names,
-    convert_coco_annotations_from_0_indexed_to_1_indexed
+    convert_coco_annotations_from_0_indexed_to_1_indexed,
+    remove_dataset_shortname_prefix_from_image_filename,
 )
 from settings import Settings
 
@@ -48,11 +49,13 @@ def main():
     # Create COCO Dataset and store in intermediate directory
     # We compress all annotations into a single category: Fish
     raw_annotations_path = raw_download_path / "noaa_estuary_fish-2023.08.19.json"
-    annotations_path_1_indexed = processing_dir / "noaa_puget_annotations_1_indexed.json"
+    annotations_path_1_indexed = (
+        processing_dir / "noaa_puget_annotations_1_indexed.json"
+    )
     convert_coco_annotations_from_0_indexed_to_1_indexed(
         raw_annotations_path, annotations_path_1_indexed
     )
-    
+
     categories_to_keep = ["fish"]
     compressed_annotations_path = (
         processing_dir / "noaa_puget_compressed_annotations.json"
@@ -64,16 +67,19 @@ def main():
     # 3. FINAL
     images_path = raw_download_path / settings.images_folder_name
 
-    # add_dataset_shortname_prefix_to_image_names(
-    #     images_path=images_path,
-    #     annotations_path=compressed_annotations_path,
-    #     dataset_shortname=DATASET_SHORTNAME,
-    # )
+    add_dataset_shortname_prefix_to_image_names(
+        images_path=images_path,
+        annotations_path=compressed_annotations_path,
+        dataset_shortname=DATASET_SHORTNAME,
+    )
 
     # Build Logic to split into train and val based on camera name
     train_camera_names = get_list_of_cameras_to_include_in_train_set(images_path)
     should_the_image_be_included_in_train_set = (
-        lambda image_name: image_name.split("_")[2] in train_camera_names
+        lambda image_name: remove_dataset_shortname_prefix_from_image_filename(
+            image_name, DATASET_SHORTNAME
+        ).split("_")[2]
+        in train_camera_names
     )
 
     train_dataset_path = (

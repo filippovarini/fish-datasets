@@ -3,6 +3,8 @@ import shutil
 from pathlib import Path
 from typing import Callable, List, Optional
 
+import tqdm
+
 from aggregation_of_final_dataset.settings import Settings
 
 
@@ -107,14 +109,14 @@ def add_dataset_shortname_prefix_to_image_names(
     if not annotations_path.exists():
         raise FileNotFoundError(f"Annotations file not found at {annotations_path}")
     
-    print(f"Adding dataset shortname prefix to image names: {dataset_shortname} - might take a while...")
+    print(f"Adding dataset shortname prefix to image names: {dataset_shortname}")
     
     # Load the annotations
     with open(annotations_path, "r") as f:
         coco_data = json.load(f)
     
     # Add the dataset shortname prefix to the image filenames
-    for image in coco_data["images"]:
+    for image in tqdm.tqdm(coco_data["images"], total=len(coco_data["images"])):
         old_image_filename = Path(image["file_name"]).name
         
         if old_image_filename.startswith(dataset_shortname):
