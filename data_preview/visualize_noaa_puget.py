@@ -51,7 +51,7 @@ def extract_example_image(
 
 
 def download_data(data_dir: Path):
-    if data_dir.exists():
+    if data_dir.exists() and len(list(data_dir.glob("*"))) > 0:
         print(f"Data already exists: {data_dir}")
         return
 
