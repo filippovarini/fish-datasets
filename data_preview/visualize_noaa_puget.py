@@ -51,10 +51,6 @@ def extract_example_image(
 
 
 def download_data(data_dir: Path):
-    if data_dir.exists() and len(list(data_dir.glob("*"))) > 0:
-        print(f"Data already exists: {data_dir}")
-        return
-
     data_dir.mkdir(exist_ok=True, parents=True)
 
     data_url = "https://storage.googleapis.com/public-datasets-lila/noaa-psnf/noaa_estuary_fish-images.zip"

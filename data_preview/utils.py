@@ -15,10 +15,6 @@ class CompressionType(Enum):
 
 
 def download_file(url: str, save_path: Path):
-    if save_path.exists():
-        print(f"File already exists: {save_path}")
-        return
-
     print(f"Downloading {url} to {save_path}...")
     # Use a session for connection pooling
     with requests.Session() as session:
@@ -60,10 +56,6 @@ def extract_downloaded_file(
         if not f.suffix == f".{compression_type.value}"
     ]
 
-    if extract_to.exists() and len(uncompressed_files) > 0:
-        print(f"Extracted file already exists: {extract_to}")
-        return
-
     if not download_path.exists():
         print("Compressed file not found")
         return
@@ -95,13 +87,10 @@ def download_and_extract(
     """
     download_path = data_dir / f"{dataset_shortname}.{compression_type.value}"
     
-    if data_dir.exists() and len(list(data_dir.glob("*"))) > 0:
-        print("Data already downloaded and extracted")
-    else:
-        print("Downloading data...")
-        download_file(data_url, download_path)
-        print("Extracting data...")
-        extract_downloaded_file(download_path, data_dir, compression_type)
+    print("Downloading data...")
+    download_file(data_url, download_path)
+    print("Extracting data...")
+    extract_downloaded_file(download_path, data_dir, compression_type)
 
     return data_dir
 
