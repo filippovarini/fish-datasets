@@ -22,7 +22,7 @@
 ### Deepfish
 1. Simply run `python aggregation_of_final_dataset/deepfish.py`
 
-### Deepvision
+### Deep Vision
 1. Simply run `python aggregation_of_final_dataset/deep_vision.py`
 
 ### Viame Fishtrack
@@ -35,3 +35,6 @@
 ### Fathomnet
 1. Simply run `python aggregation_of_final_dataset/fathomnet.py`
 ⚠️ The `download_data` function takes ages (~12h) but it works
+
+### MIT River Herring
+1. Simply run `python aggregation_of_final_dataset/mit_river_herring.py`
