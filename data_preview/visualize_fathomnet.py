@@ -1,29 +1,29 @@
 from pathlib import Path
-import json
-from datetime import datetime
 import subprocess
 
-import supervision as sv
 import matplotlib.pyplot as plt
 from fathomnet.api import boundingboxes, worms
 
 from data_preview.utils import (
-    visualize_supervision_dataset,
-    download_file,
-    extract_downloaded_file,
-    CompressionType,
+    build_and_visualize_supervision_dataset_from_coco_dataset,
 )
 
 
 DATASET_SHORTNAME = "fathomnet"
-DATA_DIR = Path("/Volumes/G-DRIVE-ArmorATD/MFD/raw") / DATASET_SHORTNAME
+DATA_DIR = Path("/Volumes/KINGSTON/mfd/raw") / DATASET_SHORTNAME
 
 
 def download_data(data_dir: Path):
+    print(f"Downloading data to {data_dir}")
+    annotations_path = data_dir / f"dataset.json"
+    images_path = data_dir / "images"
+    print(f"Annotations will be saved to {annotations_path}")
+    print(f"Images will be downloaded to {images_path}")
+
     if data_dir.exists() and len(list(data_dir.glob("*.json"))) > 0:
         print(f"Dataset already exists in {data_dir}")
-        return
-    
+        return annotations_path, images_path
+
     # Choose the root concepts for fish
     root_concepts = ["Actinopterygii", "Sarcopterygii", "Chondrichthyes", "Myxini"]
     print(f"Root concepts: {', '.join(root_concepts)}\n")
@@ -47,39 +47,38 @@ def download_data(data_dir: Path):
     with fish_concepts_file.open("w") as f:
         f.write("\n".join(sorted(fish_concepts_in_fathomnet)))
     print(f"Wrote selected concepts to {fish_concepts_file}")
-    
-    
-    today = datetime.now().strftime("%Y.%m.%d")
-    annotations_path = data_dir / f"fathomnet-{today}.json"
-    images_path = data_dir / "images"
-    print(f"Annotations will be saved to {annotations_path}")
-    print(f"Images will be downloaded to {images_path}")
-    
-    
+
     # Create directories if they don't exist
     data_dir.mkdir(exist_ok=True, parents=True)
     images_path.mkdir(exist_ok=True, parents=True)
-    
+
     cmd = [
-        "fathomnet-generate", "-v",
-        "--format", "coco",
-        "--concepts-file", str(fish_concepts_file),
-        "--output", str(data_dir),
-        "--img-download", str(images_path)
+        "fathomnet-generate",
+        "-v",
+        "--format",
+        "coco",
+        "--concepts-file",
+        str(fish_concepts_file),
+        "--output",
+        str(data_dir),
+        "--img-download",
+        str(images_path),
     ]
-    
+
     print(f"Running command: {' '.join(cmd)}")
     subprocess.run(cmd, check=True)
-    
+
     return annotations_path, images_path
 
 
 def main():
     annotations_path, images_path = download_data(DATA_DIR)
-    # visualize_supervision_dataset(annotations_path, images_path)
+    print(f"Visualizing dataset in {annotations_path} and {images_path}")
+    image = build_and_visualize_supervision_dataset_from_coco_dataset(
+        images_path, annotations_path
+    )
+    plt.imsave(f"data_preview/fathomnet_sample_image.png", image)
 
 
-# if __name__ == "__main__":
-#     main()
-    
-    
+if __name__ == "__main__":
+    main()

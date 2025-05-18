@@ -427,24 +427,6 @@ Bruslund Haurum J, Karpova A, Pedersen M, Hein Bengtson S, Moeslund TB. Re-ident
 <img src="./data_preview/Zebrafish_sample_image.png" width=150>
   
   
-### 3D-ZeF20
-
-Eight long stereo video sequences of zebrafish with boxes and keypoints
-  
-3D-ZeF: A 3D Zebrafish Tracking Benchmark Dataset, Pedersen, Malte and Haurum, Joakim and Bengtson, Stefan and Moeslund, Thomas, Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition, 250--259, 2020
-
-* Data downloadable via https from MOTchallenge (<a href="https://motchallenge.net/data/3D-ZeF20">download link</a>)
-* License: CC BY-NC-SA 3.0 DEED
-* Metadata raw format: json
-* Categories/species: zebrafish
-* Vehicle type: multi-object tracking (MOT) and 3D tracking
-* Image information: 8 RGB images
-* Annotation information: 86,400 bounding boxes and head points
-* Typical animal size in pixels: N/A
-  
-<img src="https://motchallenge.net/img/thumbnails/ZebraFish-08.jpg" width=700>
-  
-  
 ### Salmon Computer Vision
 
 Boxes on 532,000 frames from 1,567 videos of salmon in two weirs
@@ -460,7 +442,7 @@ JOUR, Atlas, William, Ma, Sami, Chou, Yi, Connors, Katrina, Scurfield, Daniel, N
 * Annotation information: bounding boxes
 * Typical animal size in pixels: N/A
   
-<img src="https://www.frontiersin.org/files/Articles/1200408/fmars-10-1200408-HTML/image_m/fmars-10-1200408-g005.jpg" width=700>
+<img src="./data_preview/Zebrafish_sample_image.png" width=700>
 
 
 ### FathomNet Database
@@ -477,5 +459,6 @@ The FathomNet Database is an open-source image database that can be used to trai
 * Image information: 100k+ images (growing over time)
 * Annotation information: 300k+ annotations (growing over time)
 * Typical animal size in pixels: N/A
+* Code to render sample annotated image: <a href="./data_preview/visualize_fathomnet.py">visualize_fathomnet.py</a>
 
-<img src="https://media.springernature.com/full/springer-static/image/art%3A10.1038%2Fs41598-022-19939-2/MediaObjects/41598_2022_19939_Fig1_HTML.jpg" width=700 />
+<img src="./data_preview/fathomnet_sample_image.png" width=700 />
