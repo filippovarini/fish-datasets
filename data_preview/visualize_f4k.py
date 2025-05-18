@@ -295,8 +295,8 @@ def clean_annotations():
 
 
 if __name__ == "__main__":
-    # extract_data()
-    # clean_annotations()
+    extract_data()
+    clean_annotations()
 
     # # Visualize data and save sample image
     image_sample = build_and_visualize_supervision_dataset_from_coco_dataset(output_dir, annotations_path)
