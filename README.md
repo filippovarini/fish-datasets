@@ -351,9 +351,6 @@ Jansen, A., Walden, D., Walker, S., & Buccella, C. (2022). A deep learning datas
 
 > ❌ This dataset was not included in the final dataset because images are taken from above the water - the first version of this Fish AI dataset includes pictures taken only underwater
   
-<img src="http://lila.science/wp-content/uploads/2017/03/affine-150.jpg" width=150>
-  
-  
 ### Brook trout imagery for individual ID
 
 435 images of brook trout with individual ID labels
@@ -370,7 +367,7 @@ Hitt, N.P., Kessler, K.G., and Letcher, B.H., 2022, Brook trout imagery data for
 * Annotation information: N/A
 * Typical animal size in pixels: N/A
   
-<img src="http://lila.science/wp-content/uploads/2017/03/brook-trout-150.jpg" width=150>
+> ❌ This dataset was not included in the final dataset because images are taken from above the water - the first version of this Fish AI dataset includes pictures taken only underwater
   
   
 ### AAU Zebrafish Re-Identification Dataset
