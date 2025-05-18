@@ -151,9 +151,9 @@ Kay, J., & Merrifield, M. (2021). The Fishnet Open Images Database: A Dataset fo
 * Image information: 143,818 RGB images
 * Annotation information: 549,209 bounding boxes
 * Typical animal size in pixels: N/A
-* Code to render sample annotated image: <a href="./data_preview/visualise_fishnet.ipynb">visualise_fishnet.ipynb</a>
-  
-<img src="./data_preview/fishnet_sample_image.png" width=700>
+
+
+> ❌ This dataset was not included in the final dataset because images are taken from above the water - the first version of this Fish AI dataset includes pictures taken only underwater
   
   
 ### DeepFish
@@ -192,25 +192,6 @@ Vaneeda Allken, Shale Rosen (2020) Deep Vision fish dataset https://doi.org/10.2
   
 <img src="./data_preview/deep_vision_sample_image.png" width=700>
   
-  
-### BrackishMOT
-
-98 videos of fish with tracking boxes (i.e., boxes with stable frame-to-frame IDs).
-  
-Pedersen M, Lehotský D, Nikolov I, Moeslund TB. Brackishmot: The brackish multi-object tracking dataset. InScandinavian Conference on Image Analysis 2023 Apr 18 (pp. 17-33). Cham: Springer Nature Switzerland.
-
-* Data downloadable via https from Kaggle (<a href="https://www.kaggle.com/datasets/maltepedersen/brackishmot">download link</a>)
-* License: CC BY (licensed updated from NC in 2025.04)
-* Metadata raw format: N/A
-* Categories/species: small fish
-* Vehicle type: underwater cameras in brackish water
-* Image information: N/A
-* Annotation information: N/A
-* Typical animal size in pixels: N/A
-* Code to render sample annotated image: <a href="./data_preview/visualise_brackishmot.ipynb">visualise_brackishmot.ipynb</a>
-  
-<img src="https://lila.science/wp-content/uploads/2017/03/brackish-150.jpg" width=150>
-  
 
 ### The Brackish Dataset
 
@@ -229,24 +210,6 @@ Detection of Marine Animals in a New Underwater Dataset with Varying Visibility,
 * Code to render sample annotated image: <a href="./data_preview/visualise_brackish.py">visualise_brackish.py</a>
   
 <img src="./data_preview/brackish_dataset_sample_image.png" width=700>
-
-
-### Brackish Underwater Dataset
-
-12.5k boxes on fish and other species in 15k images.  Largely redundant with BrackishMOT (see above).
-  
-Pedersen, M., Haurum, J. B., Gade, R., Moeslund, T. B., & Madsen, N. (2019). Detection of Marine Animals in a New Underwater Dataset with Varying Visibility. In The IEEE Conference on Computer Vision and Pattern Recognition (CVPR) Workshops, June 2019.
-
-* Data downloadable via https from Roboflow (<a href="https://public.roboflow.com/object-detection/brackish-underwater/">download link</a>)
-* License: CC BY 4.0 DEED 
-* Metadata raw format: YOLOv2, YOLOv3 CNNs
-* Categories/species: marine animals
-* Vehicle type: underwater cameras
-* Image information: 14,674 images (12,444 of which contain objects of interest with bounding box annotations)
-* Annotation information: bounding boxes
-* Typical animal size in pixels: 416 × 416
-  
-<img src="https://i.imgur.com/3dtuNhv.png" width=700>
 
   
 ### Visual Marine Animal Tracking
@@ -283,8 +246,7 @@ Australian Institute of Marine Science (AIMS), University of Western Australia (
 * Annotation information: bounding boxes
 * Typical animal size in pixels: N/A
   
-<img src="./data_preview/ozfish-sample.B000448_R.MP4.37007-700.jpg" width=700>
-  
+> ❌ This dataset was not included in the final dataset because images are taken from above the water - the first version of this Fish AI dataset includes pictures taken only underwater
   
 ### F4K Detection and Tracking
 
@@ -318,9 +280,9 @@ Joly A., Goeau H., Glotin H., Spampinato C., Bonnet P., Vellinga W.-P., Planquè
 * Image information: 20m000 images
 * Annotation information: 14,000 bounding boxes
 * Typical animal size in pixels: N/A
-* Code to rentdr sample annotated image: <a href="./data_preview/visualize_fishclef.py">visualize_fishclef.py</a>
+* Code to render sample annotated image: <a href="./data_preview/visualize_fishclef.py">visualize_fishclef.py</a>
   
-<img src="http://lila.science/wp-content/uploads/2017/03/fishclef_2015-150.png" width=150>
+<img src="./data_preview/fishclef_sample_image.png" width=150>
   
   
 ### VIAME FishTrack
@@ -352,10 +314,10 @@ Zhuang, P., Wang, Y., & Qiao, Y. (2018). WildFish: A Large Benchmark for Fish Re
 * Annotation information: N/A
 * Typical animal size in pixels: N/A
   
-<img src="https://github.com/PeiqinZhuang/WildFish/raw/master/paper/WildFish_cover.jpg" width=700>
+> ❌ This dataset was not included in the final dataset because images are already cropped, so useless for training an object detector
   
   
-### Object detection of tropical freshwater fish in Australia
+### KAKADU: Object detection of tropical freshwater fish in Australia
 
 ~44k images of fish w/ ~83kbounding boxes
   
@@ -369,8 +331,9 @@ Jansen, A., Walden, D., Walker, S., & Buccella, C. (2022). A deep learning datas
 * Image information: 44,112 images (images were derived from Remote Underwater Video (RUV) deployments in deep channel and shallow lowland billabongs, Kakadu National Park, Northern Territory Australia)
 * Annotation information: 82,904 bounding boxes
 * Typical animal size in pixels: N/A
+* Code to render sample annotated image: <a href="./data_preview/visualize_kakadu.py">visualize_kakadu.py</a>
   
-<img src="http://lila.science/wp-content/uploads/2017/03/kakadu_fish_150.jpg" width=150>
+<img src="./data_preview/kakadu_sample_image.png" width=150>
   
   
 ### AFFiNe
@@ -385,6 +348,8 @@ Jansen, A., Walden, D., Walker, S., & Buccella, C. (2022). A deep learning datas
 * Image information: >7000 images
 * Annotation information: N/A
 * Typical animal size in pixels: N/A
+
+> ❌ This dataset was not included in the final dataset because images are taken from above the water - the first version of this Fish AI dataset includes pictures taken only underwater
   
 <img src="http://lila.science/wp-content/uploads/2017/03/affine-150.jpg" width=150>
   
