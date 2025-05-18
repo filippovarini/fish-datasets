@@ -424,3 +424,19 @@ The FathomNet Database is an open-source image database that can be used to trai
 * Code to render sample annotated image: <a href="./data_preview/visualize_fathomnet.py">visualize_fathomnet.py</a>
 
 <img src="./data_preview/fathomnet_sample_image.png" width=700 />
+
+
+### Marine Detect
+
+Charles, E. (2024). marine-detect: Object Detection Models for Identifying Species in Marine Environments (Version 0.0.1) [Computer software]. https://github.com/Orange-OpenSource/marine-detectCharles, E. (2024). marine-detect: Object Detection Models for Identifying Species in Marine Environments (Version 0.0.1) [Computer software](https://github.com/Orange-OpenSource/marine-detect)
+
+A dataset of fish used to train a YOLOv8 model that compiled other datasets of fish (some of which are listed above)A dataset of fish used to train a YOLOv8 model that compiled other datasets of fish (some of which are listed above)
+
+* Data downloadable on [GitHub](https://github.com/Orange-OpenSource/marine-detect)
+* License: CC BY-NC-ND 4.0 with provision: _Notwithstanding any contrary provisions of such license, all Images may be used for training and development of machine learning algorithms for commercial, academic, and government purposes. For all other uses of the Images, users should contact the original copyright holder indicated in the Database for the applicable Images. The users of the Images accept full responsibility for their use._ (<a href="https://fathomnet.org/fathomnet/#/license">source</a>)
+* Code to render sample annotated image: <a href="./data_preview/visualize_marine_detect.py">visualize_marine_detect.py</a>
+
+<img src="./data_preview/marine_detect_sample_image.png" width=700 />
+
+
+

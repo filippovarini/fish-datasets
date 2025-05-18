@@ -41,3 +41,9 @@
 
 ### Kakkadu
 1. Simply run `python aggregation_of_final_dataset/kakadu.py`
+2. If “Error during extraction” execption generates:
+ -  Install "unzip" tool (Linux/MacOS. On Linux `sudo apt-get install unzip`) or extract manually the data. In case of manual Extraction, the result must be: `fish-dataset/data/raw/kakadu / (1.jpg | 2.jpg | 3.jpg | …)`
+ -  re-execute the .py
+
+### Marine Detect
+1. Simply run `python aggregation_of_final_dataset/marine_detect.py`
