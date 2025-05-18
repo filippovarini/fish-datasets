@@ -38,3 +38,6 @@
 
 ### MIT River Herring
 1. Simply run `python aggregation_of_final_dataset/mit_river_herring.py`
+
+### Kakkadu
+1. Simply run `python aggregation_of_final_dataset/kakadu.py`

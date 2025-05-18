@@ -2,6 +2,7 @@ import json
 import shutil
 from pathlib import Path
 from typing import Callable, List, Optional
+import random
 
 import tqdm
 
@@ -66,7 +67,7 @@ def compress_annotations_to_single_category(
     # Store the new annotation file
     with open(output_path, "w") as f:
         json.dump(coco_data, f, indent=2)
-    
+
     return output_path
 
 
@@ -108,41 +109,45 @@ def add_dataset_shortname_prefix_to_image_names(
         raise FileNotFoundError(f"Images folder not found at {images_path}")
     if not annotations_path.exists():
         raise FileNotFoundError(f"Annotations file not found at {annotations_path}")
-    
+
     print(f"Adding dataset shortname prefix to image names: {dataset_shortname}")
-    
+
     # Load the annotations
     with open(annotations_path, "r") as f:
         coco_data = json.load(f)
-    
+
     # Add the dataset shortname prefix to the image filenames
     for image in tqdm.tqdm(coco_data["images"], total=len(coco_data["images"])):
         old_image_filename = Path(image["file_name"]).name
-        
+
         if old_image_filename.startswith(dataset_shortname):
             continue
-        
+
         new_image_filename = f"{dataset_shortname}_{old_image_filename}"
-        
+
         # Rename the image file
         old_image_path = images_path / old_image_filename
         new_image_path = images_path / new_image_filename
         try:
             assert old_image_path.exists(), f"Image not found at {old_image_path}"
-            assert not new_image_path.exists(), f"Image already exists at {new_image_path}"
+            assert (
+                not new_image_path.exists()
+            ), f"Image already exists at {new_image_path}"
         except Exception as e:
-            print(f"⚠️⚠️ Error renaming image {old_image_filename} to {new_image_filename}: {e}")
+            print(
+                f"⚠️⚠️ Error renaming image {old_image_filename} to {new_image_filename}: {e}"
+            )
             continue
-        
+
         old_image_path.rename(new_image_path)
-        
+
         # Update the annotation with the new image filename
         image["file_name"] = new_image_filename
-    
+
     # Save the annotations
     with open(annotations_path, "w") as f:
         json.dump(coco_data, f, indent=2)
-    
+
 
 def remove_dataset_shortname_prefix_from_image_filename(
     image_filename: str, dataset_shortname: str
@@ -231,7 +236,7 @@ def split_coco_dataset_into_train_validation(
         if not source_image_path.exists():
             print(f"⚠️⚠️ Source image not found: {source_image_path}")
             continue
-        
+
         # Add image to the appropriate split
         target_image_ids.add(image["id"])
         target_coco["images"].append(image)
@@ -272,3 +277,27 @@ def split_coco_dataset_into_train_validation(
     print(
         f"  - Validation: {len(val_coco['images'])} images, {len(val_coco['annotations'])} annotations"
     )
+
+
+def copy_images_to_processing(dataset_shortname: str, source_images_path: Path):
+    print(f"Copying images to processing: {source_images_path}")
+    for image in tqdm.tqdm(source_images_path.glob("*"), total=len(list(source_images_path.glob("*")))):
+        destination = (
+            settings.intermediate_dir
+            / dataset_shortname
+            / settings.images_folder_name
+            / image.name
+        )
+        if destination.exists():
+            raise FileExistsError(f"⚠️ Conflict: '{destination.name}' already exists!")
+        shutil.copy(image, destination)
+
+
+def get_train_images_with_random_splitting(image_folder: Path) -> list[str]:
+    # Split the images randomly as all are from the same camera, location and datetime
+    all_images = list(image_folder.glob("*.jpg"))
+    train_ratio = 1 - settings.train_val_split_ratio
+    train_size = int(len(all_images) * train_ratio)
+    train_images = random.sample(all_images, train_size)
+    train_images = [image.name for image in train_images]
+    return train_images
