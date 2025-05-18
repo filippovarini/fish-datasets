@@ -3,7 +3,7 @@ from dataclasses import dataclass
 
 @dataclass
 class Settings:
-    base_dir = Path("/mnt/data/dev/fish-datasets/data")
+    base_dir = Path("/Volumes/KINGSTON/mfd")
     raw_dir: Path = base_dir / "raw"
     processed_dir: Path = base_dir / "final"
     intermediate_dir: Path = base_dir / "processing"

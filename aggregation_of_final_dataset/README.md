@@ -31,3 +31,7 @@
 ### Fishclef
 1. Simply run `python aggregation_of_final_dataset/fishclef.py`
 ⚠️ One frame is not extracted properly from videos `01465f8f61db58564cd37ce2dfc519c5#201106090830_0_frame_1000.jpg` and thus causes a warning (no error). If you run the file you'll build successfully the dataset, and we'll exclude just 1 (out of ~15k) images.
+
+### Fathomnet
+1. Simply run `python aggregation_of_final_dataset/fathomnet.py`
+⚠️ The `download_data` function takes ages (~12h) but it works
