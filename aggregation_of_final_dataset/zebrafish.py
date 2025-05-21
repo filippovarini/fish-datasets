@@ -9,6 +9,7 @@ from aggregation_of_final_dataset.utils import (
     compress_annotations_to_single_category,
     split_coco_dataset_into_train_validation,
     add_dataset_shortname_prefix_to_image_names,
+    remove_dataset_shortname_prefix_from_image_filename,
 )
 from data_preview.visualize_zebrafish import (
     DATASET_SHORTNAME,
@@ -68,9 +69,11 @@ def main():
     # Only 2 videos: Vid1, Vid2. Split one in train and one in validation.
     # Not the ideal split ratio, but we give priority to not polluting
     # training/val with images from the same video
-    should_the_image_be_included_in_train_set = lambda image_path: Path(
-        image_path
-    ).stem.startswith(f"{DATASET_SHORTNAME}_Vid1")
+    should_the_image_be_included_in_train_set = (
+        lambda image_name: remove_dataset_shortname_prefix_from_image_filename(
+            image_name, DATASET_SHORTNAME
+        ).startswith("Vid1")
+    )
 
     train_dataset_path = (
         settings.processed_dir / f"{DATASET_SHORTNAME}{settings.train_dataset_suffix}"
