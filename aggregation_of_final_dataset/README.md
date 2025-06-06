@@ -38,3 +38,8 @@
 
 ### MIT River Herring
 1. Simply run `python aggregation_of_final_dataset/mit_river_herring.py`
+
+
+## Aggregated dataset
+- The `image_id` is the filename (unique)
+- The `catecory_id` is monotonically increasing from 0

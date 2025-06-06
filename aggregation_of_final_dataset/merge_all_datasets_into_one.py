@@ -11,9 +11,9 @@ settings = Settings()
 
 
 def main():
-    final_dataset_dir = settings.processed_dir
+    final_dataset_dir = Path("/mnt/data/dev/fish-datasets/data/final_legacy")
     
-    merged_dataset_dir = settings.base_dir / "community_fish_ai"
+    merged_dataset_dir = settings.base_dir / "community_fish_ai_take2"
     merged_dataset_dir.mkdir(parents=True, exist_ok=True)
     merged_images_dir = merged_dataset_dir / settings.images_folder_name
     merged_images_dir.mkdir(parents=True, exist_ok=True)
@@ -26,10 +26,9 @@ def main():
         "categories": settings.coco_categories
     }
     
-    annotation_id_counter = 1
-    image_id_old_to_new_map = {}
-
     for dataset in final_dataset_dir.glob("*"):
+        image_id_old_to_new_map = {}
+        
         if dataset.is_dir():
             is_train_dataset = dataset.name.endswith(settings.train_dataset_suffix)
             
@@ -46,32 +45,24 @@ def main():
             
             # Process images
             for image in tqdm(dataset_coco["images"], desc="Processing images", total=len(dataset_coco["images"])):
-                try:
-                    # Copy image to merged directory
-                    file_name = Path(image["file_name"]).name
-                    src_image = dataset / settings.images_folder_name / file_name
-                    dst_image = merged_images_dir / file_name
-                    shutil.copy2(src_image, dst_image)
-                    
-                    # Update image info
-                    old_image_id = image["id"]
-                    image["id"] = len(image_id_old_to_new_map) + 1
-                    image["is_train"] = is_train_dataset
-                    merged_coco["images"].append(image)
-                    image_id_old_to_new_map[old_image_id] = image["id"]
-                except Exception as e:
-                    print(f"Error processing image {image['file_name']}: {e}")
-                    traceback.print_exc()
+                # Copy image to merged directory
+                file_name = Path(image["file_name"]).name
+                src_image = dataset / settings.images_folder_name / file_name
+                dst_image = merged_images_dir / file_name
+                shutil.copy2(src_image, dst_image)
+                
+                # Update image info
+                old_image_id = image["id"]
+                image["id"] = image["file_name"]
+                image["is_train"] = is_train_dataset
+                merged_coco["images"].append(image)
+                image_id_old_to_new_map[old_image_id] = image["id"]
             
             # Process annotations
             for annotation in tqdm(dataset_coco["annotations"], desc="Processing annotations", total=len(dataset_coco["annotations"])):
-                try:
-                    annotation["id"] = annotation_id_counter
-                    annotation["image_id"] = image_id_old_to_new_map[annotation["image_id"]]
-                    merged_coco["annotations"].append(annotation)
-                    annotation_id_counter += 1
-                except Exception as e:
-                    print(f"Error processing annotation {annotation['id']}: {e}")
+                annotation["id"] = len(merged_coco["annotations"])
+                annotation["image_id"] = image_id_old_to_new_map[annotation["image_id"]]
+                merged_coco["annotations"].append(annotation)
 
     # Save the merged COCO annotations
     with open(merged_annotations_file, "w") as f:
