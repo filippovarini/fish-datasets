@@ -442,7 +442,7 @@ JOUR, Atlas, William, Ma, Sami, Chou, Yi, Connors, Katrina, Scurfield, Daniel, N
 * Annotation information: bounding boxes
 * Typical animal size in pixels: N/A
   
-<img src="./data_preview/Zebrafish_sample_image.png" width=700>
+<img src="./data_preview/salmon_computer_vision_sample_image.jpg" width=700>
 
 
 ### FathomNet Database
